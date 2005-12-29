@@ -1,5 +1,8 @@
 Revision history for Perl extension Params::Util
 
+0.09 Fri Dec 30 2005
+	- Fixed broken link to RT in POD
+
 0.08 Mon Dec 19 2005
 	- Moved from old CVS repository to newer SVN repository
 	- Added _CALLABLE (provided Ricardo Signes)
