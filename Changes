@@ -1,5 +1,9 @@
 Revision history for Perl extension Params::Util
 
+0.10 Sat Jan 14 2006
+	- Updated copyright
+	- Added _STRING
+
 0.09 Fri Dec 30 2005
 	- Fixed broken link to RT in POD
 

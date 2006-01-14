@@ -4,7 +4,6 @@
 
 use strict;
 use lib ();
-use UNIVERSAL 'isa';
 use File::Spec::Functions ':ALL';
 BEGIN {
 	$| = 1;
@@ -15,7 +14,7 @@ BEGIN {
 	}
 }
 
-use Test::More tests => 436;
+use Test::More tests => 474;
 use Scalar::Util 'refaddr';
 use Params::Util ();
 
@@ -31,6 +30,48 @@ sub dies  {
 		like( $@, $regexp, '... with expected error message' );
 	}
 }
+
+
+
+
+
+#####################################################################
+# Tests for _STRING
+
+# Test bad things against the actual function
+dies( "Params::Util::_STRING()", qr/Not enough arguments/, '...::_STRING() dies' );
+null( Params::Util::_STRING(undef),        '...::_STRING(undef) returns undef' );
+null( Params::Util::_STRING(''),           '...::_STRING(nullstring) returns undef' );
+null( Params::Util::_STRING({ foo => 1 }), '...::_STRING(HASH) returns undef' );
+null( Params::Util::_STRING(sub () { 1 }), '...::_STRING(CODE) returns undef' );
+null( Params::Util::_STRING([]),           '...::_STRING(ARRAY) returns undef' );
+null( Params::Util::_STRING(\""),          '...::_STRING(null constant) returns undef' );
+null( Params::Util::_STRING(\"foo"),       '...::_STRING(SCALAR) returns undef' );
+
+# Test good things against the actual function (carefully)
+foreach my $ident ( qw{0 1 foo _foo foo1 __foo_1 Foo::Bar}, ' ', ' foo' ) {
+	is( Params::Util::_STRING($ident), $ident, "...::_STRING('$ident') returns ok" );
+}
+
+# Import the function
+use_ok( 'Params::Util', '_STRING' );
+ok( defined *_STRING{CODE}, '_STRING imported ok' );
+
+# Test bad things against the actual function
+dies( "_STRING()", qr/Not enough arguments/, '...::_STRING() dies' );
+null( _STRING(undef),        '_STRING(undef) returns undef' );
+null( _STRING(''),           '_STRING(nullstring) returns undef' );
+null( _STRING({ foo => 1 }), '_STRING(HASH) returns undef' );
+null( _STRING(sub () { 1 }), '_STRING(CODE) returns undef' );
+null( _STRING([]),           '_STRING(ARRAY) returns undef' );
+null( _STRING(\""),          '_STRING(null constant) returns undef' );
+null( _STRING(\"foo"),       '_STRING(SCALAR) returns undef' );
+
+# Test good things against the actual function (carefully)
+foreach my $ident ( qw{0 1 foo _foo foo1 __foo_1 Foo::Bar}, ' ', ' foo' ) {
+	is( _STRING($ident), $ident, "...::_STRING('$ident') returns ok" );
+}
+
 
 
 

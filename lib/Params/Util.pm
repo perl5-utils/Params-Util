@@ -27,18 +27,28 @@ C<Params::Util> provides a basic set of importable functions that makes
 checking parameters a hell of a lot easier
 
 While they can be (and are) used in other contexts, the main point
-behind this module is that the functions both Do What You Mean, and
-Do The Right Thing, so they are most useful when you are getting
+behind this module is that the functions B<both> Do What You Mean,
+and Do The Right Thing, so they are most useful when you are getting
 params passed into your code from someone and/or somewhere else
 and you can't really trust the quality.
 
+Thus, C<Params::Util> is of most use at the edges of your API, where
+params and data are coming in from outside your code.
+
 The functions provided by C<Params::Util> check in the most strictly
-correct manner, and in should not be fooled by odd cases.
+correct manner known, are documented as thoroughly as possible so their
+exact behaviour is clear, and heavily tested so make sure they are not
+fooled by weird data and Really Bad Things.
 
 To use, simply load the module providing the functions you want to use
 as arguments (as shown in the SYNOPSIS).
 
 To aid in maintainability, C<Params::Util> will never export by default.
+
+You must explicitly name the functions you want to export, or use the
+C<:ALL> param to just have it export everything (although this is not
+recommended if you have any _FOO functions yourself with which future
+additions to C<Params::Util> may clash)
 
 =head1 FUNCTIONS
 
@@ -51,11 +61,11 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.09';
+	$VERSION   = '0.10';
 
 	@EXPORT_OK = qw{
-		_IDENTIFIER _CLASS
-		_POSINT
+		_STRING     _IDENTIFIER _CLASS
+		_POSINT 
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0
 		_HASH       _HASH0
@@ -72,6 +82,35 @@ BEGIN {
 
 #####################################################################
 # Param Checking Functions
+
+=pod
+
+=head2 _STRING $string
+
+The C<_STRING> function is intended to be imported into your
+package, and provides a convenient way to test to see if a value is
+a normal non-false string of non-zero length.
+
+Note that this will NOT do anything magic to deal with the special
+C<'0'> false negative case, but will return it.
+
+  # '0' not considered valid data
+  my $name = _STRING(shift) or die "Bad name";
+  
+  # '0' is considered valid data
+  my $string = _STRING($_[0]) ? shift : die "Bad string";
+
+Please also note that this function expects a normal string. It does
+not support overloading or other magic techniques to get a string.
+
+Returns the string as a conveince if it is a valid string, or
+C<undef> if not.
+
+=cut
+
+sub _STRING ($) {
+	(defined $_[0] and ! ref $_[0] and length($_[0])) ? $_[0] : undef;
+}
 
 =pod
 
@@ -371,9 +410,11 @@ sub _SET0 ($$) {
 
 =head1 TO DO
 
+- Add _CAN to help resolve the UNIVERSAL::can debacle
+
 - More comprehensive tests for _SET and _SET0
 
-- Would be nice if someone would re-implement in XS for me? (done)
+- Would be nice if someone would re-implement in XS for me? (donish)
 
 - Would be even nicer if someone would demonstrate how the hell to
 build a Module::Install dist of the ::Util dual Perl/XS type. :/
@@ -395,7 +436,7 @@ Adam Kennedy E<lt>cpan@ali.asE<gt>, L<http://ali.as/>
 
 =head1 COPYRIGHT
 
-Copyright 2005 Adam Kennedy. All rights reserved.
+Copyright 2005, 2006 Adam Kennedy. All rights reserved.
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
