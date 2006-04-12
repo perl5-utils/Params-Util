@@ -14,7 +14,7 @@ BEGIN {
 	}
 }
 
-use Test::More tests => 474;
+use Test::More tests => 475;
 use Scalar::Util 'refaddr';
 use Params::Util ();
 
@@ -141,7 +141,7 @@ null( Params::Util::_CLASS("D'oh"),       '...::_CLASS(bad class) returns undef'
 null( Params::Util::_CLASS("::Foo"),      '...::_CLASS(bad class) returns undef' );
 
 # Test good things against the actual function (carefully)
-foreach my $ident ( qw{foo _foo foo1 __foo_1 Foo::Bar _Foo::Baaar::Baz} ) {
+foreach my $ident ( qw{foo _foo foo1 __foo_1 Foo::Bar _Foo::Baaar::Baz X::1} ) {
 	is( Params::Util::_CLASS($ident), $ident, "...::_CLASS('$ident') returns ok" );
 }
 
