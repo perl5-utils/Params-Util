@@ -1,5 +1,9 @@
 Revision history for Perl extension Params::Util
 
+0.11 Wed Apr 12 2006
+  - Update _CLASS to allow numeric parts in the tail, like Foo::10
+    (provided by Ricardo Signes)
+
 0.10 Sat Jan 14 2006
 	- Updated copyright
 	- Added _STRING
@@ -9,7 +13,7 @@ Revision history for Perl extension Params::Util
 
 0.08 Mon Dec 19 2005
 	- Moved from old CVS repository to newer SVN repository
-	- Added _CALLABLE (provided Ricardo Signes)
+	- Added _CALLABLE (provided by Ricardo Signes)
 
 0.07 Mon Oct 10 2005
 	- Adding the :ALL tag
