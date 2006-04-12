@@ -61,7 +61,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.10';
+	$VERSION   = '0.11';
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER _CLASS
