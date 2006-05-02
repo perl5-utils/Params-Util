@@ -61,16 +61,17 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.11';
+	$VERSION   = '0.12';
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER _CLASS
 		_POSINT 
 		_SCALAR     _SCALAR0
-		_ARRAY      _ARRAY0
-		_HASH       _HASH0
+		_ARRAY      _ARRAY0    _ARRAYLIKE
+		_HASH       _HASH0     _HASHLIKE
 		_CODE       _CALLABLE
 		_INSTANCE   _SET       _SET0
+    _INVOCANT
 		};
 
 	%EXPORT_TAGS = (ALL => \@EXPORT_OK);
@@ -250,6 +251,21 @@ sub _ARRAY0 ($) {
 
 =pod
 
+=head2 _ARRAYLIKE $value
+
+The C<_ARRAYLIKE> function tests whether a given scalar value can respond to
+array dereferencing.  If it can, the value is returned.  If it cannot,
+C<_ARRAYLIKE> returns C<undef>.
+
+=cut
+
+sub _ARRAYLIKE {
+  (defined $_[0] and ref $_[0] and ((Scalar::Util::reftype($_[0]) eq 'ARRAY')
+    or overload::Method($_[0], '@{}'))) ? $_[0] : undef;
+}
+
+=pod
+
 =head2 _HASH $value
 
 The C<_HASH> function is intended to be imported into your package,
@@ -286,6 +302,21 @@ if the value provided is not an C<HASH> reference.
 
 sub _HASH0 ($) {
 	ref $_[0] eq 'HASH' ? $_[0] : undef;
+}
+
+=pod
+
+=head2 _HASHLIKE $value
+
+The C<_HASHLIKE> function tests whether a given scalar value can respond to
+hash dereferencing.  If it can, the value is returned.  If it cannot,
+C<_HASHLIKE> returns C<undef>.
+
+=cut
+
+sub _HASHLIKE {
+  (defined $_[0] and ref $_[0] and ((Scalar::Util::reftype($_[0]) eq 'HASH')
+    or overload::Method($_[0], '%{}'))) ? $_[0] : undef;
 }
 
 =pod
@@ -347,6 +378,24 @@ provided is not an object of that type.
 sub _INSTANCE ($$) {
 	(Scalar::Util::blessed($_[0]) and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
+
+=pod
+
+=head2 _INVOCANT $value
+
+This routine tests whether the given value is a valid method invocant.  If so,
+the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
+
+=cut
+
+sub _INVOCANT {
+  (defined $_[0] and
+  (Scalar::Util::blessed($_[0])
+   or      
+  # We only need to check for stash definedness here because blessing creates
+  # the stash.
+  (Params::Util::_CLASS($_[0]) and defined *{"$_[0]\::"}))) ? $_[0] : undef;
+} 
 
 =pod
 

@@ -14,7 +14,7 @@ BEGIN {
 	}
 }
 
-use Test::More tests => 478;
+use Test::More tests => 494;
 use Scalar::Util 'refaddr';
 use Params::Util ();
 
@@ -236,6 +236,7 @@ my $scalar = \$foo;
 # Test bad things against the actual function
 dies( "Params::Util::_SCALAR()", qr/Not enough arguments/, '...::_SCALAR() dies' );
 null( Params::Util::_SCALAR(undef),        '...::_SCALAR(undef) returns undef' );
+null( Params::Util::_SCALAR(\undef),       '...::_SCALAR(\undef) returns undef' );
 null( Params::Util::_SCALAR(''),           '...::_SCALAR(nullstring) returns undef' );
 null( Params::Util::_SCALAR(1),            '...::_SCALAR(number) returns undef' );
 null( Params::Util::_SCALAR('foo'),        '...::_SCALAR(string) returns undef' );
@@ -257,6 +258,7 @@ ok( defined *_SCALAR{CODE}, '_SCALAR imported ok' );
 # Test bad things against the imported function
 dies( "_SCALAR()", qr/Not enough arguments/, '...::_SCALAR() dies' );
 null( _SCALAR(undef),        '...::_SCALAR(undef) returns undef' );
+null( _SCALAR(\undef),       '...::_SCALAR(\undef) returns undef' );
 null( _SCALAR(''),           '...::_SCALAR(nullstring) returns undef' );
 null( _SCALAR(1),            '...::_SCALAR(number) returns undef' );
 null( _SCALAR('foo'),        '...::_SCALAR(string) returns undef' );
@@ -646,6 +648,12 @@ foreach my $object ( @objects ) {
 #####################################################################
 # Tests for _SET
 
+my %set = (
+  good  => [ map { bless {} => 'Foo' } qw(1..3) ],
+  mixed => [ map { bless {} => "Foo$_" } qw(1..3) ],
+  unblessed => [ map { {} } qw(1..3) ],
+);
+
 # Test bad things against the actual function
 dies( "Params::Util::_SET()", qr/Not enough arguments/, '...::_SET() dies' );
 dies( "Params::Util::_SET([])", qr/Not enough arguments/, '...::_SET(single) dies' );
@@ -657,6 +665,9 @@ null( Params::Util::_SET(\'foo', 'Foo'),       '...::_SET(SCALAR) returns undef'
 null( Params::Util::_SET({ foo => 1 }, 'Foo'), '...::_SET(HASH) returns undef' );
 null( Params::Util::_SET(sub () { 1 }, 'Foo'), '...::_SET(CODE) returns undef' );
 null( Params::Util::_SET([], 'Foo'),           '...::_SET(empty ARRAY) returns undef' );
+ok( Params::Util::_SET($set{good}, 'Foo'),     '...::_SET(homogenous ARRAY) returns true' );
+null( Params::Util::_SET($set{mixed}, 'Foo'),  '...::_SET(mixed ARRAY) returns undef' );
+null( Params::Util::_SET($set{unblessed}, 'Foo'), '...::_SET(unblessed ARRAY) returns undef' );
 
 # Import the function
 use_ok( 'Params::Util', '_SET' );
@@ -674,6 +685,9 @@ null( _SET({ foo => 1 }, 'Foo'), '_SET(HASH) returns undef' );
 null( _SET(sub () { 1 }, 'Foo'), '_SET(CODE) returns undef' );
 null( _SET([], 'Foo'),           '_SET(empty ARRAY) returns undef' );
 
+ok( _SET($set{good}, 'Foo'),      '_SET(homogenous ARRAY) returns true');
+null( _SET($set{mixed}, 'Foo'),     '_SET(mixed ARRAY) returns undef');
+null( _SET($set{unblessed}, 'Foo'),     '_SET(unblessed ARRAY) returns undef');
 
 
 
@@ -691,6 +705,10 @@ null( Params::Util::_SET0('foo', 'Foo'),        '...::_SET0(string) returns unde
 null( Params::Util::_SET0(\'foo', 'Foo'),       '...::_SET0(SCALAR) returns undef' );
 null( Params::Util::_SET0({ foo => 1 }, 'Foo'), '...::_SET0(HASH) returns undef' );
 null( Params::Util::_SET0(sub () { 1 }, 'Foo'), '...::_SET0(CODE) returns undef' );
+ok( Params::Util::_SET0([], 'Foo'),             '...::_SET0(empty ARRAY) returns true' );
+ok( Params::Util::_SET0($set{good}, 'Foo'),      '...::_SET0(homogenous ARRAY) returns true' );
+null( Params::Util::_SET0($set{mixed}, 'Foo'),     '...::_SET0(mixed ARRAY) returns undef' );
+null( Params::Util::_SET0($set{unblessed}, 'Foo'),     '...::_SET0(unblessed ARRAY) returns undef' );
 
 # Import the function
 use_ok( 'Params::Util', '_SET0' );
@@ -706,6 +724,10 @@ null( _SET0('foo', 'Foo'),        '_SET0(string) returns undef' );
 null( _SET0(\'foo', 'Foo'),       '_SET0(SCALAR) returns undef' );
 null( _SET0({ foo => 1 }, 'Foo'), '_SET0(HASH) returns undef' );
 null( _SET0(sub () { 1 }, 'Foo'), '_SET0(CODE) returns undef' );
+ok( _SET0([], 'Foo'),             '_SET0(empty ARRAY) returns true' );
+ok( _SET0($set{good}, 'Foo'),     '_SET0(homogenous ARRAY) returns true' );
+null( _SET0($set{mixed}, 'Foo'),  '_SET0(mixed ARRAY) returns undef' );
+null( _SET0($set{unblessed}, 'Foo'),     '_SET0(unblessed ARRAY) returns undef' );
 
 
 

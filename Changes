@@ -1,5 +1,10 @@
 Revision history for Perl extension Params::Util
 
+0.12 Mon May  1 2006
+  - Added _ARRAYLIKE and _HASHLIKE
+  - Added _INVOCANT
+  - Expanded test suite
+
 0.11 Wed Apr 12 2006
   - Update _CLASS to allow numeric parts in the tail, like Foo::10
     (provided by Ricardo Signes)
