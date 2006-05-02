@@ -71,7 +71,7 @@ BEGIN {
 		_HASH       _HASH0     _HASHLIKE
 		_CODE       _CALLABLE
 		_INSTANCE   _SET       _SET0
-    _INVOCANT
+		_INVOCANT
 		};
 
 	%EXPORT_TAGS = (ALL => \@EXPORT_OK);
@@ -260,8 +260,11 @@ C<_ARRAYLIKE> returns C<undef>.
 =cut
 
 sub _ARRAYLIKE {
-  (defined $_[0] and ref $_[0] and ((Scalar::Util::reftype($_[0]) eq 'ARRAY')
-    or overload::Method($_[0], '@{}'))) ? $_[0] : undef;
+	(defined $_[0] and ref $_[0] and (
+		(Scalar::Util::reftype($_[0]) eq 'ARRAY')
+		or
+		overload::Method($_[0], '@{}')
+	)) ? $_[0] : undef;
 }
 
 =pod
@@ -315,8 +318,11 @@ C<_HASHLIKE> returns C<undef>.
 =cut
 
 sub _HASHLIKE {
-  (defined $_[0] and ref $_[0] and ((Scalar::Util::reftype($_[0]) eq 'HASH')
-    or overload::Method($_[0], '%{}'))) ? $_[0] : undef;
+	(defined $_[0] and ref $_[0] and (
+		(Scalar::Util::reftype($_[0]) eq 'HASH')
+		or
+		overload::Method($_[0], '%{}')
+	)) ? $_[0] : undef;
 }
 
 =pod
@@ -359,7 +365,10 @@ value provided is not callable.
 =cut
 
 sub _CALLABLE {
-  (Scalar::Util::reftype($_[0])||'') eq 'CODE' or Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}') ? $_[0] : undef;
+	(Scalar::Util::reftype($_[0])||'') eq 'CODE'
+	or
+	Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
+	? $_[0] : undef;
 }
 
 =pod
@@ -389,12 +398,13 @@ the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
 =cut
 
 sub _INVOCANT {
-  (defined $_[0] and
-  (Scalar::Util::blessed($_[0])
-   or      
-  # We only need to check for stash definedness here because blessing creates
-  # the stash.
-  (Params::Util::_CLASS($_[0]) and defined *{"$_[0]\::"}))) ? $_[0] : undef;
+	(defined $_[0] and
+		(Scalar::Util::blessed($_[0])
+		or      
+		# We only need to check for stash definedness here
+		# because blessing creates the stash.
+		(Params::Util::_CLASS($_[0]) and defined *{"$_[0]\::"}))
+	) ? $_[0] : undef;
 } 
 
 =pod
