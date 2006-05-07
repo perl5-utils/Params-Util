@@ -1,5 +1,9 @@
 Revision history for Perl extension Params::Util
 
+0.13 Sun May  7 2006
+	- No functional changes
+	- Upgrading Module::Install to 0.62 final
+
 0.12 Mon May  1 2006
 	- Added _ARRAYLIKE and _HASHLIKE (Ricardo Signes again)
 	- Added _INVOCANT (Ricardo Signes again!)
