@@ -1,14 +1,31 @@
+#!/usr/bin/perl -w
+
 use strict;
-use warnings;
+use lib ();
+use File::Spec::Functions ':ALL';
+BEGIN {
+	$| = 1;
+	unless ( $ENV{HARNESS_ACTIVE} ) {
+		require FindBin;
+		$FindBin::Bin = $FindBin::Bin; # Avoid a warning
+		chdir catdir( $FindBin::Bin, updir() );
+		lib->import(
+			catdir('blib', 'arch'),
+			catdir('blib', 'lib' ),
+			catdir('lib'),
+			);
+	}
+}
 
 use Test::More tests => 9;
-BEGIN { use_ok('Params::Util', qw(_INVOCANT)); }
+BEGIN {
+	use_ok('Params::Util', qw(_INVOCANT));
+}
 
 my $object = bless \do { my $i } => 'Params::Util::Test::Bogus::Whatever';
 my $tied   = tie my $x, 'Params::Util::Test::_INVOCANT::Tied';
-
-my $unpkg = 'Params::Util::Test::_INVOCANT::Fake';
-my $pkg   = 'Params::Util::Test::_INVOCANT::Real'; eval "package $pkg;";
+my $unpkg  = 'Params::Util::Test::_INVOCANT::Fake';
+my $pkg    = 'Params::Util::Test::_INVOCANT::Real'; eval "package $pkg;";
 
 my @data = (# I
   [ undef    , 0, 'undef' ],

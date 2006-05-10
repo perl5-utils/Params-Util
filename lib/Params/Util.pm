@@ -43,7 +43,8 @@ fooled by weird data and Really Bad Things.
 To use, simply load the module providing the functions you want to use
 as arguments (as shown in the SYNOPSIS).
 
-To aid in maintainability, C<Params::Util> will never export by default.
+To aid in maintainability, C<Params::Util> will B<never> export by
+default.
 
 You must explicitly name the functions you want to export, or use the
 C<:ALL> param to just have it export everything (although this is not
@@ -55,13 +56,14 @@ additions to C<Params::Util> may clash)
 =cut
 
 use strict;
-use base 'Exporter';
 use overload     ();
+use Exporter     ();
 use Scalar::Util ();
 
-use vars qw{$VERSION @EXPORT_OK %EXPORT_TAGS};
+use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.13';
+	$VERSION = '0.14';
+	@ISA     = 'Exporter';
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER _CLASS
@@ -69,7 +71,7 @@ BEGIN {
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0    _ARRAYLIKE
 		_HASH       _HASH0     _HASHLIKE
-		_CODE       _CALLABLE
+		_CODE       _CODELIKE
 		_INSTANCE   _SET       _SET0
 		_INVOCANT
 		};
@@ -344,10 +346,10 @@ sub _CODE ($) {
 
 =pod
 
-=head2 _CALLABLE $value
+=head2 _CODELIKE $value
 
-The C<_CALLABLE> is the more generic version of C<_CODE>. Unlike C<_CODE>,
-which checks for an explicit C<CODE> reference, the C<_CALLABLE> function
+The C<_CODELIKE> is the more generic version of C<_CODE>. Unlike C<_CODE>,
+which checks for an explicit C<CODE> reference, the C<_CODELIKE> function
 also includes things that act like them, such as blessed objects that
 overload C<'&{}'>.
 
@@ -362,13 +364,27 @@ to true in boolean context.
 Returns the callable value as a convenience, or C<undef> if the
 value provided is not callable.
 
+Note: This function was formerly known as _CODELIKE but has been renamed
+for greater symmetry with the other _XXXXLIKE functions.
+
+It will continue to work silently until end-May 2006, then with a
+warning until end-August 2006, then will be deprecated.
+
+I apologise for any inconvenience caused.
+
 =cut
 
-sub _CALLABLE {
+sub _CODELIKE {
 	(Scalar::Util::reftype($_[0])||'') eq 'CODE'
 	or
 	Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
 	? $_[0] : undef;
+}
+
+# Will stay around until end-May, then a warning till end-Augest,
+# then deprecated.
+BEGIN {
+	*_CALLABLE = *_CODELIKE;
 }
 
 =pod
@@ -405,7 +421,7 @@ sub _INVOCANT {
 		# because blessing creates the stash.
 		(Params::Util::_CLASS($_[0]) and defined *{"$_[0]\::"}))
 	) ? $_[0] : undef;
-} 
+}
 
 =pod
 
