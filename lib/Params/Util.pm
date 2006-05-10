@@ -72,7 +72,7 @@ BEGIN {
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0    _ARRAYLIKE
 		_HASH       _HASH0     _HASHLIKE
-		_CODE       _CODELIKE
+		_CODE       _CODELIKE  _CALLABLE
 		_INSTANCE   _SET       _SET0
 		_INVOCANT
 		};
