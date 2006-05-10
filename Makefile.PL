@@ -7,5 +7,4 @@ requires       'Scalar::Util'     => '1.11';
 build_requires 'Test::More'       => '0.47';
 build_requires 'File::Spec'       => '0.80';
 
-auto_install;
 WriteAll;
