@@ -55,7 +55,9 @@ additions to C<Params::Util> may clash)
 
 =cut
 
-use 5.005;
+BEGIN {
+	require 5.004;
+}
 use strict;
 use overload     ();
 use Exporter     ();
@@ -63,7 +65,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION = '0.14';
+	$VERSION = '0.15';
 	@ISA     = 'Exporter';
 
 	@EXPORT_OK = qw{

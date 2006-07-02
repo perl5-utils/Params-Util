@@ -1,5 +1,10 @@
 Revision history for Perl extension Params::Util
 
+0.15   Sun  2 Jul 2006
+	# This release contains only build-time changes
+	- Updating to Module::Build 0.63 to add 5.004 support (sorta)
+	- Dropping version dependency to 5.004 (Ricadro Signes)
+
 0.14   Wed 10 May 2006
 	- No features() used in this dist, so removing auto_install
 	- Moved _CALLABLE to _CODELIKE for symmetry reasons. Sorry :(
