@@ -30,7 +30,7 @@ my $pkg    = 'Params::Util::Test::_INVOCANT::Real'; eval "package $pkg;";
 my @data = (# I
   [ undef    , 0, 'undef' ],
   [ 1000    => 0, '1000' ],
-  [ $unpkg  => 0, qq("$unpkg") ],
+  [ $unpkg  => 1, qq("$unpkg") ],
   [ $pkg    => 1, qq("$pkg") ],
   [ []      => 0, '[]' ],
   [ {}      => 0, '{}' ],

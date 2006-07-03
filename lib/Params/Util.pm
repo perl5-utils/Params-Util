@@ -420,9 +420,9 @@ sub _INVOCANT {
 	(defined $_[0] and
 		(Scalar::Util::blessed($_[0])
 		or      
-		# We only need to check for stash definedness here
-		# because blessing creates the stash.
-		(Params::Util::_CLASS($_[0]) and defined *{"$_[0]\::"}))
+		# We used to check for stash definedness, but any class-like name is a
+    # valid invocant for UNIVERSAL methods, so we stopped. -- rjbs, 2006-07-02
+		Params::Util::_CLASS($_[0]))
 	) ? $_[0] : undef;
 }
 
