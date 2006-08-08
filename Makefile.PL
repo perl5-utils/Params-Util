@@ -1,7 +1,7 @@
 use inc::Module::Install;
 
 name           'Params-Util';
-version        '5.004';
+perl_version   '5.004';
 all_from       'lib/Params/Util.pm';
 requires       'Exporter'     => 0;
 requires       'Scalar::Util' => '1.11';
