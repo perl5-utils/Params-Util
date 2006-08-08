@@ -65,8 +65,8 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION = '0.16';
-	@ISA     = 'Exporter';
+	$VERSION   = '0.17';
+	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER _CLASS
@@ -75,8 +75,9 @@ BEGIN {
 		_ARRAY      _ARRAY0    _ARRAYLIKE
 		_HASH       _HASH0     _HASHLIKE
 		_CODE       _CODELIKE  _CALLABLE
-		_INSTANCE   _SET       _SET0
 		_INVOCANT
+		_INSTANCE   _SET       _SET0
+		_HANDLE
 		};
 
 	%EXPORT_TAGS = (ALL => \@EXPORT_OK);
@@ -367,7 +368,7 @@ to true in boolean context.
 Returns the callable value as a convenience, or C<undef> if the
 value provided is not callable.
 
-Note: This function was formerly known as _CODELIKE but has been renamed
+Note - This function was formerly known as _CODELIKE but has been renamed
 for greater symmetry with the other _XXXXLIKE functions.
 
 It will continue to work silently until end-May 2006, then with a
@@ -392,6 +393,25 @@ BEGIN {
 
 =pod
 
+=head2 _INVOCANT $value
+
+This routine tests whether the given value is a valid method invocant.  If so,
+the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
+
+=cut
+
+sub _INVOCANT {
+	(defined $_[0] and
+		(Scalar::Util::blessed($_[0])
+		or      
+		# We used to check for stash definedness, but any class-like name is a
+		# valid invocant for UNIVERSAL methods, so we stopped. -- rjbs, 2006-07-02
+		Params::Util::_CLASS($_[0]))
+	) ? $_[0] : undef;
+}
+
+=pod
+
 =head2 _INSTANCE $object, $class
 
 The C<_INSTANCE> function is intended to be imported into your package,
@@ -405,25 +425,6 @@ provided is not an object of that type.
 
 sub _INSTANCE ($$) {
 	(Scalar::Util::blessed($_[0]) and $_[0]->isa($_[1])) ? $_[0] : undef;
-}
-
-=pod
-
-=head2 _INVOCANT $value
-
-This routine tests whether the given value is a valid method invocant.  If so,
-the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
-
-=cut
-
-sub _INVOCANT {
-	(defined $_[0] and
-		(Scalar::Util::blessed($_[0])
-		or      
-		# We used to check for stash definedness, but any class-like name is a
-    # valid invocant for UNIVERSAL methods, so we stopped. -- rjbs, 2006-07-02
-		Params::Util::_CLASS($_[0]))
-	) ? $_[0] : undef;
 }
 
 =pod
@@ -459,8 +460,8 @@ sub _SET ($$) {
 =head2 _SET0 \@array, $class
 
 The C<_SET0> function is intended to be imported into your package,
-and provides a convenient way to test for set of objects of a particular
-class in a strictly correct manner, allowing for zero objects.
+and provides a convenient way to test for a set of objects of a
+particular class in a strictly correct manner, allowing for zero objects.
 
 The set is provided as a reference to an C<ARRAY> of objects of the
 class provided.
@@ -482,7 +483,54 @@ sub _SET0 ($$) {
 	$set;
 }
 
-1;
+=pod
+
+=head2 _HANDLE
+
+B<EXPERIMENTAL: SUBJECT TO CHANGE OR POSSIBLE REMOVAL>
+
+The C<_HANDLE> function is intended to be imported into your package,
+and provides a convenient way to test whether or not a single scalar
+value is a file handle.
+
+Unfortunately, in Perl the definition of a file handle can be a little
+bit fuzzy, so this function is likely to be somewhat imperfect (at first
+anyway).
+
+That said, it is implement as well or better than the other file handle
+detectors in existance (and we stole from the best of them).
+
+=cut
+
+# We're doing this longhand for now. Once everything is perfect,
+# we'll compress this into something that is more efficient.
+sub _HANDLE {
+	my $it = shift;
+
+	# It has to be defined, of course
+	unless ( defined $it ) {
+		return undef;
+	}
+
+	# Normal globs are considered to be file handles
+	if ( \$it eq 'GLOB' ) {
+		return $it;
+	}
+
+	# Check for a conventional IO::Handle object
+	if ( Scalar::Util::blessed($it) and $it->isa('IO::Handle') ) {
+		return $it;
+	}
+
+	# Check for a normal tied filehandle
+	# Side Note: 5.5.4's tied() and can() doesn't like getting undef
+	if ( tied($it) and tied($it)->can('TIEHANDLE') ) {
+		return $it;
+	}
+
+	# Dunno... no?
+	return undef;
+}
 
 =pod
 
@@ -492,7 +540,7 @@ sub _SET0 ($$) {
 
 - More comprehensive tests for _SET and _SET0
 
-- Would be nice if someone would re-implement in XS for me? (donish)
+- Would be nice if someone would re-implement in XS for me? (done'ish)
 
 - Would be even nicer if someone would demonstrate how the hell to
 build a Module::Install dist of the ::Util dual Perl/XS type. :/
@@ -510,11 +558,15 @@ For other issues, contact the author.
 
 =head1 AUTHOR
 
-Adam Kennedy E<lt>cpan@ali.asE<gt>, L<http://ali.as/>
+Adam Kennedy E<lt>cpan@ali.asE<gt>
+
+=head1 SEE ALSO
+
+L<http://ali.as/>
 
 =head1 COPYRIGHT
 
-Copyright 2005, 2006 Adam Kennedy. All rights reserved.
+Copyright 2005, 2006 Adam Kennedy.
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Testing for _CALLABLE
+# Testing for _CODELIKE
 
 use strict;
 use File::Spec::Functions ':ALL';
@@ -12,11 +12,11 @@ use Test::More;
 use Scalar::Util qw(blessed reftype);
 use overload;
 
-sub  c_ok { ok(   _CALLABLE($_[0]), "callable: $_[1]"     ) }
-sub nc_ok { ok( ! _CALLABLE($_[0]), "not callable: $_[1]" ) }
+sub  c_ok { ok(   _CODELIKE($_[0]), "callable: $_[1]"     ) }
+sub nc_ok { ok( ! _CODELIKE($_[0]), "not callable: $_[1]" ) }
 
 my @callables = (
-  "callable itself"                         => \&_CALLABLE,
+  "callable itself"                         => \&_CODELIKE,
   "a boring plain code ref"                 => sub {},
   'an object with overloaded &{}'           => C::O->new,
   'a object build from a coderef'           => C::C->new,
@@ -40,8 +40,8 @@ my @uncallables = (
 plan tests => (@callables + @uncallables) / 2 + 2;
 
 # Import the function
-use_ok( 'Params::Util', '_CALLABLE' );
-ok( defined *_CALLABLE{CODE}, '_CALLABLE imported ok' );
+use_ok( 'Params::Util', '_CODELIKE' );
+ok( defined *_CODELIKE{CODE}, '_CODELIKE imported ok' );
 
 while ( @callables ) {
   my ($name, $object) = splice @callables, 0, 2;

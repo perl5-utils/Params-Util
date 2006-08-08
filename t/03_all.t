@@ -3,23 +3,12 @@
 # Main testing for Params::Util
 
 use strict;
-use lib ();
 use File::Spec::Functions ':ALL';
 BEGIN {
 	$| = 1;
-	unless ( $ENV{HARNESS_ACTIVE} ) {
-		require FindBin;
-		$FindBin::Bin = $FindBin::Bin; # Avoid a warning
-		chdir catdir( $FindBin::Bin, updir() );
-		lib->import(
-			catdir('blib', 'arch'),
-			catdir('blib', 'lib' ),
-			catdir('lib'),
-			);
-	}
 }
 
-use Test::More tests => 18;
+use Test::More tests => 19;
 BEGIN {
 	use_ok( 'Params::Util', ':ALL' );
 }
@@ -48,5 +37,6 @@ ok( defined &_CODELIKE,   '_CODELIKE imported ok'   );
 ok( defined &_INSTANCE,   '_INSTANCE imported ok'   );
 ok( defined &_SET,        '_SET imported ok'        );
 ok( defined &_SET0,       '_SET0 imported ok'       );
+ok( defined &_HANDLE,     '_HANDLE imported ok'     );
 
 1;
