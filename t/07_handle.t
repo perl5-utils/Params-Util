@@ -32,7 +32,7 @@ sub is_handle {
 	my $message = shift || 'Is a file handle';
 	my $result  = _HANDLE($maybe);
 	ok( ! defined $result, '_HANDLE does not return undef' );
-	is_deeply( $maybe, $result, '_HANDLE returns the passed value' );
+	is_deeply( $result, $maybe, '_HANDLE returns the passed value' );
 }
 
 sub not_handle {
@@ -70,7 +70,7 @@ SCOPE: {
 
 # On 5.8+ the new style filehandle
 SKIP: {
-	skip( "Skipping 5.8-style 'my $fh' handles", 2 ) if $] < 5.008;
+	skip( "Skipping 5.8-style 'my \$fh' handles", 2 ) if $] < 5.008;
 	open( my $handle, $readfile );
 	is_handle( $handle, '5.8-style read filehandle' );
 	$handle->close;

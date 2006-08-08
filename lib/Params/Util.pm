@@ -532,6 +532,8 @@ sub _HANDLE {
 	return undef;
 }
 
+1;
+
 =pod
 
 =head1 TO DO
