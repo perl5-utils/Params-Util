@@ -513,7 +513,7 @@ sub _HANDLE {
 	}
 
 	# Normal globs are considered to be file handles
-	if ( \$it eq 'GLOB' ) {
+	if ( ref $it eq 'GLOB' ) {
 		return $it;
 	}
 

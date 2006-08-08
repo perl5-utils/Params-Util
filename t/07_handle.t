@@ -6,7 +6,7 @@ BEGIN {
 	$| = 1;
 }
 
-use Test::More tests => 9;
+use Test::More tests => 23;
 BEGIN {
 	ok( ! defined &_HANDLE, '_HANDLE does not exist' );
 	use_ok('Params::Util', qw(_HANDLE));
@@ -31,15 +31,14 @@ sub is_handle {
 	my $maybe   = shift;
 	my $message = shift || 'Is a file handle';
 	my $result  = _HANDLE($maybe);
-	ok( ! defined $result, '_HANDLE does not return undef' );
-	is_deeply( $result, $maybe, '_HANDLE returns the passed value' );
+	ok( defined $result, '_HANDLE does not return undef' );
+	is( Scalar::Util::refaddr($result), Scalar::Util::refaddr($maybe), '_HANDLE returns the passed value' );
 }
 
 sub not_handle {
 	my $maybe   = shift;
 	my $message = shift || 'Is not a file handle';
 	my $result  = _HANDLE($maybe);
-	ok( defined $maybe, 'Scalar to test is defined' );
 	ok( ! defined $result, '_HANDLE returns undef' );
 }
 
@@ -53,16 +52,16 @@ sub not_handle {
 # A read filehandle
 SCOPE: {
 	local *HANDLE;
-	my $handle = open( HANDLE, $readfile );
-	is_handle( $handle, 'Ordinary read filehandle' );
+	open( HANDLE, $readfile );
+	is_handle( \*HANDLE, 'Ordinary read filehandle' );
 	close HANDLE;
 }
 
 # A write filehandle
 SCOPE: {
 	local *HANDLE;
-	my $handle = open( HANDLE, "> $readfile" );
-	is_handle( $handle, 'Ordinary read filehandle' );
+	open( HANDLE, "> $readfile" );
+	is_handle( \*HANDLE, 'Ordinary read filehandle' );
 	print HANDLE "A write filehandle";
 	close HANDLE;
 	if ( -f $writefile ) { unlink $writefile };
@@ -73,7 +72,6 @@ SKIP: {
 	skip( "Skipping 5.8-style 'my \$fh' handles", 2 ) if $] < 5.008;
 	open( my $handle, $readfile );
 	is_handle( $handle, '5.8-style read filehandle' );
-	$handle->close;
 }
 
 
