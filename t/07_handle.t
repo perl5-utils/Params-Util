@@ -13,6 +13,9 @@ BEGIN {
 	ok( defined &_HANDLE, '_HANDLE imported ok' );
 }
 
+# Import refaddr to make certain we have it
+use Scalar::Util 'refaddr';
+
 
 
 
@@ -32,7 +35,7 @@ sub is_handle {
 	my $message = shift || 'Is a file handle';
 	my $result  = _HANDLE($maybe);
 	ok( defined $result, '_HANDLE does not return undef' );
-	is( Scalar::Util::refaddr($result), Scalar::Util::refaddr($maybe), '_HANDLE returns the passed value' );
+	is( refaddr($result), refaddr($maybe), '_HANDLE returns the passed value' );
 }
 
 sub not_handle {

@@ -65,7 +65,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.17';
+	$VERSION   = '0.18';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
