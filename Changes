@@ -3,6 +3,8 @@ Revision history for Perl extension Params::Util
 0.18 Thu 14 Sep 2006
 	- Explicitly importing refaddr in t/07_handle.t to fix
           test failure on ActivePerl 5.8.0.
+	- Increased Scalar::Util dep to 1.14 because we may well
+	  be hurt by tied handles-related bug.
 
 0.17 Tue  8 Aug 2006
 	- Adding experimental _HANDLE implementation
