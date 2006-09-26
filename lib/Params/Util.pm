@@ -65,7 +65,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.19';
+	$VERSION   = '0.20';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
@@ -357,10 +357,22 @@ which checks for an explicit C<CODE> reference, the C<_CODELIKE> function
 also includes things that act like them, such as blessed objects that
 overload C<'&{}'>.
 
-Note that in the case of objects overloaded with '&{}', you will almost
-always end up also testing it in 'bool' context. As such, you will most
-often want to make sure your class has the following to allow it to evaluate
-to true in boolean context.
+Please note that in the case of objects overloaded with '&{}', you will
+almost always end up also testing it in 'bool' context at some stage.
+
+For example:
+
+  sub foo {
+      my $coed1 = _CODELIKE(shift) or die "No code param provided";
+      my $code2 = _CODELIKE(shift);
+      if ( $code2 ) {
+           print "Got optional second code param";
+      }
+  }
+
+As such, you will most likely always want to make sure your class has
+at least the following to allow it to evaluate to true in boolean
+context.
 
   # Always evaluate to true in boolean context
   use overload 'bool' => sub () { 1 };
@@ -368,11 +380,11 @@ to true in boolean context.
 Returns the callable value as a convenience, or C<undef> if the
 value provided is not callable.
 
-Note - This function was formerly known as _CODELIKE but has been renamed
+Note - This function was formerly known as _CALLABLE but has been renamed
 for greater symmetry with the other _XXXXLIKE functions.
 
-It will continue to work silently until end-May 2006, then with a
-warning until end-August 2006, then will be deprecated.
+The use of _CALLABLE has been deprecated. It will continue to work, but
+with a warning, until end-2006, then will be removed.
 
 I apologise for any inconvenience caused.
 
@@ -385,10 +397,10 @@ sub _CODELIKE {
 	? $_[0] : undef;
 }
 
-# Will stay around until end-May, then a warning till end-Augest,
-# then deprecated.
-BEGIN {
-	*_CALLABLE = *_CODELIKE;
+# Will stay around until end-2006 with a warning, then will be deleted.
+sub _CALLABLE {
+	warn "_CALLABLE has been deprecated. Change to _CODELIKE";
+	_CODELIKE(@_);
 }
 
 =pod
@@ -503,7 +515,9 @@ detectors in existance (and we stole from the best of them).
 =cut
 
 # We're doing this longhand for now. Once everything is perfect,
-# we'll compress this into something that is more efficient.
+# we'll compress this into something that compiles more efficiently.
+# Further, testing file handles is not something that is generally
+# done millions of times, so doing it slowly is not a big speed hit.
 sub _HANDLE {
 	my $it = shift;
 
@@ -517,18 +531,41 @@ sub _HANDLE {
 		return $it;
 	}
 
-	# Check for a conventional IO::Handle object
-	if ( Scalar::Util::blessed($it) and $it->isa('IO::Handle') ) {
-		return $it;
-	}
-
 	# Check for a normal tied filehandle
 	# Side Note: 5.5.4's tied() and can() doesn't like getting undef
 	if ( tied($it) and tied($it)->can('TIEHANDLE') ) {
 		return $it;
 	}
 
-	# Dunno... no?
+	# There are no other non-object handles that we support
+	unless ( Scalar::Util::blessed($it) ) {
+		return undef;
+	}
+
+	# Check for a common base classes for conventional IO::Handle object
+	if ( $it->isa('IO::Handle') ) {
+		return $it;
+	}
+
+
+	# Check for tied file handles using Tie::Handle
+	if ( $it->isa('Tie::Handle') ) {
+		return $it;
+	}
+
+	# IO::Scalar is not a proper seekable, but it is valid is a
+	# regular file handle
+	if ( $it->isa('IO::Scalar') ) {
+		return $it;
+	}
+
+	# Yet another special case for IO::String, which refuses (for now
+	# anyway) to become a subclass of IO::Handle.
+	if ( $it->isa('IO::String') ) {
+		return $it;
+	}
+
+	# This is not any sort of object we know about
 	return undef;
 }
 
@@ -550,6 +587,8 @@ build a Module::Install dist of the ::Util dual Perl/XS type. :/
 - Implement an assertion-like version of this module, that dies on
 error.
 
+- Implement a Test:: version of this module, for use in testing
+
 =head1 SUPPORT
 
 Bugs should be reported via the CPAN bug tracker at
@@ -560,11 +599,11 @@ For other issues, contact the author.
 
 =head1 AUTHOR
 
-Adam Kennedy E<lt>cpan@ali.asE<gt>
+Adam Kennedy E<lt>adamk@cpan.orgE<gt>
 
 =head1 SEE ALSO
 
-L<http://ali.as/>
+L<Params::Validate>, L<http://ali.as/>
 
 =head1 COPYRIGHT
 
