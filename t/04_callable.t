@@ -37,11 +37,18 @@ my @uncallables = (
   'a non-coderef blessed into CODE'         => (bless {} => 'CODE'),
 );
 
-plan tests => (@callables + @uncallables) / 2 + 2;
+plan tests => (@callables + @uncallables) / 2 + 3;
 
 # Import the function
 use_ok( 'Params::Util', '_CALLABLE' );
 ok( defined *_CALLABLE{CODE}, '_CALLABLE imported ok' );
+
+my $warnings = 0;
+my $expected = (scalar(@callables) + scalar(@uncallables)) / 2;
+local $SIG{__WARN__} = sub {
+	$warnings++;
+	return;
+};
 
 while ( @callables ) {
   my ($name, $object) = splice @callables, 0, 2;
@@ -52,6 +59,8 @@ while ( @uncallables ) {
   my ($name, $object) = splice @uncallables, 0, 2;
   nc_ok($object, $name);
 }
+
+is( $warnings, $expected, 'Caught the expected number of warnings' );
 
 
 

@@ -3,6 +3,9 @@ Revision history for Perl extension Params::Util
 0.20 Tue 26 Sep 2006
 	- Advanced deprecation of _CALLABLE to "warn but work".
 	- Correctly refer to _CALLABLE being deprecated, not _CODELIKE.
+	- Add support for Tie::Handle objects to _HANDLE
+	- Add support for IO::Scalar objects to _HANDLE
+	- Add support for IO::String objects to _HANDLE
 
 0.19 Thu 14 Sep 2006
 	- Adding more Scalar::Util tests, this time with some diagnostics
