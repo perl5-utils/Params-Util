@@ -1,5 +1,10 @@
 Revision history for Perl extension Params::Util
 
+0.21 Tue 10 Oct 2006
+	- When no compiler available, minimise the dependency on Scalar::Util,
+	  because it's better to leave them with a slightly leaky version
+	  than to fail altogether.
+
 0.20 Tue 26 Sep 2006
 	- Advanced deprecation of _CALLABLE to "warn but work".
 	- Correctly refer to _CALLABLE being deprecated, not _CODELIKE.
