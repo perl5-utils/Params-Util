@@ -9,11 +9,23 @@ BEGIN {
 }
 
 use Test::More;
-use Scalar::Util qw(blessed reftype);
+use Scalar::Util qw(
+	blessed
+	reftype
+	refaddr
+	);
 use overload;
 
-sub  c_ok { ok(   _CALLABLE($_[0]), "callable: $_[1]"     ) }
-sub nc_ok { ok( ! _CALLABLE($_[0]), "not callable: $_[1]" ) }
+sub c_ok { is(
+	refaddr(_CALLABLE($_[0])),
+	refaddr($_[0]),
+	"callable: $_[1]",
+) }
+sub nc_ok { is(
+	_CALLABLE($_[0]),
+	undef,
+	"not callable: $_[1]"
+) }
 
 my @callables = (
   "callable itself"                         => \&_CALLABLE,

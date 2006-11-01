@@ -65,7 +65,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.21';
+	$VERSION   = '0.22';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
@@ -391,9 +391,11 @@ I apologise for any inconvenience caused.
 =cut
 
 sub _CODELIKE {
-	(Scalar::Util::reftype($_[0])||'') eq 'CODE'
-	or
-	Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
+	(
+		(Scalar::Util::reftype($_[0])||'') eq 'CODE'
+		or
+		Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
+	)
 	? $_[0] : undef;
 }
 

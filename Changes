@@ -1,5 +1,9 @@
 Revision history for Perl extension Params::Util
 
+0.22 Wed  1 Nov 2006
+	- Bug fix to _CODELIKE to handle CODE refs properly
+	- Updating tests to work more accurately in this regard.
+
 0.21 Tue 10 Oct 2006
 	- When no compiler available, minimise the dependency on Scalar::Util,
 	  because it's better to leave them with a slightly leaky version
