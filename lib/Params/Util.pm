@@ -409,8 +409,10 @@ sub _CALLABLE {
 
 =head2 _INVOCANT $value
 
-This routine tests whether the given value is a valid method invocant.  If so,
-the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
+This routine tests whether the given value is a valid method invocant. This can
+be either an instance of an object, or a class name.
+
+If so, the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
 
 =cut
 
