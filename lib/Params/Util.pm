@@ -418,7 +418,7 @@ If so, the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
 
 sub _INVOCANT {
 	(defined $_[0] and
-		(Scalar::Util::blessed($_[0])
+		(defined Scalar::Util::blessed($_[0])
 		or      
 		# We used to check for stash definedness, but any class-like name is a
 		# valid invocant for UNIVERSAL methods, so we stopped. -- rjbs, 2006-07-02

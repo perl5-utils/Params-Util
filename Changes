@@ -1,5 +1,8 @@
 Revision history for Perl extension Params::Util
 
+0.23 Tue 20 Feb 2007
+        - Bug fix to _INVOCANT to handle false classes.
+
 0.22 Wed  1 Nov 2006
 	- Bug fix to _CODELIKE to handle CODE refs properly
 	- Updating tests to work more accurately in this regard.
