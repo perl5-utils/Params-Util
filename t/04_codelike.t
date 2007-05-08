@@ -1,14 +1,13 @@
-#!/usr/bin/perl -w
-
-# Testing for _CODELIKE
+#!/usr/bin/perl
 
 use strict;
-use File::Spec::Functions ':ALL';
 BEGIN {
-	$| = 1;
+	$|  = 1;
+	$^W = 1;
 }
 
 use Test::More;
+use File::Spec::Functions ':ALL';
 use Scalar::Util qw(
 	blessed
 	reftype

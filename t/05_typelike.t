@@ -1,12 +1,13 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 use strict;
-use File::Spec::Functions ':ALL';
 BEGIN {
-	$| = 1;
+	$|  = 1;
+	$^W = 1;
 }
 
 use Test::More tests => 29;
+use File::Spec::Functions ':ALL';
 BEGIN {
 	use_ok('Params::Util', qw(_ARRAYLIKE _HASHLIKE));
 }

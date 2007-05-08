@@ -1,14 +1,13 @@
-#!/usr/bin/perl -w
-
-# Main testing for Params::Util
+#!/usr/bin/perl
 
 use strict;
-use File::Spec::Functions ':ALL';
 BEGIN {
-	$| = 1;
+	$|  = 1;
+	$^W = 1;
 }
 
 use Test::More tests => 494;
+use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
 

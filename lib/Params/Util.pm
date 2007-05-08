@@ -78,6 +78,7 @@ BEGIN {
 		_INVOCANT
 		_INSTANCE   _SET       _SET0
 		_HANDLE
+		_DRIVER
 		};
 
 	%EXPORT_TAGS = (ALL => \@EXPORT_OK);
@@ -571,6 +572,34 @@ sub _HANDLE {
 
 	# This is not any sort of object we know about
 	return undef;
+}
+
+=pod
+
+=head2 _DRIVER $string
+
+  sub foo {
+    my $class = _DRIVER(shift, 'My::Driver::Base') or die "Bad driver";
+    ...
+  }
+
+The C<_DRIVER> function is intended to be imported into your
+package, and provides a convenient way to load and validate
+a driver class.
+
+The most common pattern when taking a driver class as a parameter
+is to check that the name is a class (i.e. check against _CLASS)
+and then to load the class (if it exists) and then ensure that
+the class returns true for the isa method on some base driver name.
+
+Return the value as a convenience, or C<undef> if the value is not
+a class name, the module does not exist, the module does not load,
+or the class fails the isa test.
+
+=cut
+
+sub _DRIVER ($$) {
+	(defined _CLASS($_[0]) and eval "require $_[0];" and ! $@ and $_[0]->isa($_[1]) and $_[0] ne $_[1]) ? $_[0] : undef;
 }
 
 1;

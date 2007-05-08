@@ -1,14 +1,13 @@
-#!/usr/bin/perl -w
-
-# Compile testing for Params::Util
+#!/usr/bin/perl
 
 use strict;
-use File::Spec::Functions ':ALL';
 BEGIN {
-	$| = 1;
+	$|  = 1;
+	$^W = 1;
 }
 
 use Test::More tests => 5;
+use File::Spec::Functions ':ALL';
 
 # Check their perl version
 ok( $] >= 5.005, "Your perl is new enough" );
