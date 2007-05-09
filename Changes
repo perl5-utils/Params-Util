@@ -1,5 +1,8 @@
 Revision history for Perl extension Params::Util
 
+0.24 Wed  9 May 2007
+	- Adding the _DRIVER function for use in writing driver APIs
+
 0.23 Tue 20 Feb 2007
         - Bug fix to _INVOCANT to handle false classes.
 

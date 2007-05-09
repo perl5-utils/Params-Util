@@ -65,7 +65,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.23';
+	$VERSION   = '0.24';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
@@ -582,6 +582,8 @@ sub _HANDLE {
     my $class = _DRIVER(shift, 'My::Driver::Base') or die "Bad driver";
     ...
   }
+
+B<EXPERIMENTAL: SUBJECT TO CHANGE OR POSSIBLE REMOVAL>
 
 The C<_DRIVER> function is intended to be imported into your
 package, and provides a convenient way to load and validate
