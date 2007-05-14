@@ -6,12 +6,16 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 30;
+use Test::More tests => 86;
 use File::Spec::Functions ':ALL';
 BEGIN {
-	ok( ! defined &_DRIVER, '_HANDLE does not exist' );
-	use_ok('Params::Util', qw(_DRIVER));
-	ok( defined &_DRIVER, '_HANDLE imported ok' );
+	ok( ! defined &_CLASSISA, '_CLASSISA does not exist' );
+	ok( ! defined &_SUBCLASS, '_SUBCLASS does not exist' );
+	ok( ! defined &_DRIVER,   '_DRIVER does not exist'   );
+	use_ok('Params::Util', qw(_CLASSISA _SUBCLASS _DRIVER));
+	ok(   defined &_CLASSISA, '_CLASSISA imported ok'    );
+	ok(   defined &_SUBCLASS, '_SUBCLASS imported ok'    );
+	ok(   defined &_DRIVER,   '_DRIVER imported ok'      );
 }
 
 # Import refaddr to make certain we have it
@@ -50,7 +54,9 @@ foreach (
 	undef, '', ' ', 'foo bar', 1, 0, -1, 1.23,
 	[], {}, \'', bless( {}, "foo" )
 ) {
-	is( _DRIVER($_, 'A'), undef, 'Non-driver returns undef' );
+	is( _CLASSISA($_, 'A'), undef, 'Non-classisa returns undef' );
+	is( _SUBCLASS($_, 'A'), undef, 'Non-subclass returns undef' );
+	is( _DRIVER($_, 'A'),   undef, 'Non-driver returns undef'   );
 }
 
 
@@ -59,6 +65,24 @@ foreach (
 
 #####################################################################
 # Sample Classes
+
+# classisa should not load classes
+is( _CLASSISA('A', 'A'), 'A',   'A: Driver base class is undef' );
+is( _CLASSISA('B', 'A'), undef, 'B: Good driver returns ok' );
+is( _CLASSISA('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _CLASSISA('C', 'A'), undef, 'C: Non-existant driver is undef' );
+is( _CLASSISA('D', 'A'), undef, 'D: Broken driver is undef' );
+is( _CLASSISA('E', 'A'), undef, 'E: Not a driver returns undef' );
+is( _CLASSISA('F', 'A'), undef, 'F: Faked isa returns ok' );
+
+# classisa should not load classes
+is( _SUBCLASS('A', 'A'), undef, 'A: Driver base class is undef' );
+is( _SUBCLASS('B', 'A'), undef, 'B: Good driver returns ok' );
+is( _SUBCLASS('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _SUBCLASS('C', 'A'), undef, 'C: Non-existant driver is undef' );
+is( _SUBCLASS('D', 'A'), undef, 'D: Broken driver is undef' );
+is( _SUBCLASS('E', 'A'), undef, 'E: Not a driver returns undef' );
+is( _SUBCLASS('F', 'A'), undef, 'F: Faked isa returns ok' );
 
 # The base class itself is not a driver
 is( _DRIVER('A', 'A'), undef, 'A: Driver base class is undef' );
@@ -70,3 +94,21 @@ is( _DRIVER('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _DRIVER('D', 'A'), undef, 'D: Broken driver is undef' );
 is( _DRIVER('E', 'A'), undef, 'E: Not a driver returns undef' );
 is( _DRIVER('F', 'A'), 'F',   'F: Faked isa returns ok' );
+
+# Repeat for classisa
+is( _CLASSISA('A', 'A'), 'A',   'A: Driver base class is undef' );
+is( _CLASSISA('B', 'A'), 'B',   'B: Good driver returns ok' );
+is( _CLASSISA('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _CLASSISA('C', 'A'), undef, 'C: Non-existant driver is undef' );
+is( _CLASSISA('D', 'A'), 'D',   'D: Broken driver is undef' );
+is( _CLASSISA('E', 'A'), undef, 'E: Not a driver returns undef' );
+is( _CLASSISA('F', 'A'), 'F',   'F: Faked isa returns ok' );
+
+# Repeat for subclasses
+is( _SUBCLASS('A', 'A'), undef, 'A: Driver base class is undef' );
+is( _SUBCLASS('B', 'A'), 'B',   'B: Good driver returns ok' );
+is( _SUBCLASS('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _SUBCLASS('C', 'A'), undef, 'C: Non-existant driver is undef' );
+is( _SUBCLASS('D', 'A'), 'D',   'D: Broken driver is undef' );
+is( _SUBCLASS('E', 'A'), undef, 'E: Not a driver returns undef' );
+is( _SUBCLASS('F', 'A'), 'F',   'F: Faked isa returns ok' );

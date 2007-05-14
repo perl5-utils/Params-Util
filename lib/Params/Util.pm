@@ -65,18 +65,19 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.24';
+	$VERSION   = '0.25';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
-		_STRING     _IDENTIFIER _CLASS
+		_STRING     _IDENTIFIER
+		_CLASS      _CLASSISA   _SUBCLASS
 		_POSINT 
 		_SCALAR     _SCALAR0
-		_ARRAY      _ARRAY0    _ARRAYLIKE
-		_HASH       _HASH0     _HASHLIKE
-		_CODE       _CODELIKE  _CALLABLE
+		_ARRAY      _ARRAY0     _ARRAYLIKE
+		_HASH       _HASH0      _HASHLIKE
+		_CODE       _CODELIKE   _CALLABLE
 		_INVOCANT
-		_INSTANCE   _SET       _SET0
+		_INSTANCE   _SET        _SET0
 		_HANDLE
 		_DRIVER
 		};
@@ -156,6 +157,54 @@ C<undef> if not.
 
 sub _CLASS ($) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s) ? $_[0] : undef;
+}
+
+=pod
+
+=head2 _CLASSISA $string
+
+The C<_CLASSISA> function is intended to be imported into your
+package, and provides a convenient way to test to see if a value is
+a string that is a particularly class, or a subclass of it.
+
+This function checks that the format is valid and calls the -E<gt>isa
+method on the class name. It does not check that the class is actually
+loaded.
+
+It also assumes "normalised" form, and does
+not accept class names such as C<::Foo> or C<D'Oh>.
+
+Returns the string as a convenience if it is a valid class name, or
+C<undef> if not.
+
+=cut
+
+sub _CLASSISA ($$) {
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0]->isa($_[1])) ? $_[0] : undef;
+}
+
+=pod
+
+=head2 _SUBCLASS $string
+
+The C<_SUBCLASS> function is intended to be imported into your
+package, and provides a convenient way to test to see if a value is
+a string that is a subclass of a specified class.
+
+This function checks that the format is valid and calls the -E<gt>isa
+method on the class name. It does not check that the class is actually
+loaded.
+
+It also assumes "normalised" form, and does
+not accept class names such as C<::Foo> or C<D'Oh>.
+
+Returns the string as a convenience if it is a valid class name, or
+C<undef> if not.
+
+=cut
+
+sub _SUBCLASS ($$) {
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
 
 =pod

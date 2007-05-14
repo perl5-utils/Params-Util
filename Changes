@@ -1,7 +1,8 @@
 Revision history for Perl extension Params::Util
 
 0.25 Mon 14 May 2007
-	- Adding the _SUBCLASS function to fill a gap between _CLASS and _DRIVER
+	- Adding the _CLASSISA and _SUBCLASS functions to fill
+	  a gap between _CLASS and _DRIVER
 
 0.24 Wed  9 May 2007
 	- Adding the _DRIVER function for use in writing driver APIs
