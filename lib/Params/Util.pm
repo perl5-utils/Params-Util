@@ -70,7 +70,7 @@ BEGIN {
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER
-		_CLASS      _CLASSISA   _SUBCLASS
+		_CLASS      _CLASSISA   _SUBCLASS  _DRIVER
 		_POSINT 
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0     _ARRAYLIKE
@@ -79,7 +79,6 @@ BEGIN {
 		_INVOCANT
 		_INSTANCE   _SET        _SET0
 		_HANDLE
-		_DRIVER
 		};
 
 	%EXPORT_TAGS = (ALL => \@EXPORT_OK);
@@ -161,7 +160,7 @@ sub _CLASS ($) {
 
 =pod
 
-=head2 _CLASSISA $string
+=head2 _CLASSISA $string, $class
 
 The C<_CLASSISA> function is intended to be imported into your
 package, and provides a convenient way to test to see if a value is
@@ -185,7 +184,7 @@ sub _CLASSISA ($$) {
 
 =pod
 
-=head2 _SUBCLASS $string
+=head2 _SUBCLASS $string, $class
 
 The C<_SUBCLASS> function is intended to be imported into your
 package, and provides a convenient way to test to see if a value is
