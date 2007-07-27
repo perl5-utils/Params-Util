@@ -65,13 +65,13 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.25';
+	$VERSION   = '0.26';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER
 		_CLASS      _CLASSISA   _SUBCLASS  _DRIVER
-		_POSINT 
+		_POSINT     _NONNEGINT
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0     _ARRAYLIKE
 		_HASH       _HASH0      _HASHLIKE
@@ -217,10 +217,41 @@ a positive integer (of any length).
 Returns the value as a convience, or C<undef> if the value is not a
 positive integer.
 
+The name itself is derived from the XML schema constraint of the same
+name.
+
 =cut
 
 sub _POSINT ($) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[1-9]\d*$/) ? $_[0] : undef;
+}
+
+=pod
+
+=head2 _NONNEGINT $integer
+
+The C<_NONNEGINT> function is intended to be imported into your
+package, and provides a convenient way to test to see if a value is
+a non-negative integer (of any length). That is, a positive integer,
+or zero.
+
+Returns the value as a convience, or C<undef> if the value is not a
+non-negative integer.
+
+As with other tests that may return false values, care should be taken
+to test via "defined" in boolean validy contexts.
+
+  unless ( defined _NONNEGINT($value) ) {
+     die "Invalid value";
+  }
+
+The name itself is derived from the XML schema constraint of the same
+name.
+
+=cut
+
+sub _NONNEGINT ($) {
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^(?:0|[1-9]\d*)$/) ? $_[0] : undef;
 }
 
 =pod

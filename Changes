@@ -1,5 +1,8 @@
 Revision history for Perl extension Params::Util
 
+0.26 Fri 27 Jul 2007
+	- Adding the _NONNEGINT function
+
 0.25 Mon 14 May 2007
 	- Adding the _CLASSISA and _SUBCLASS functions to fill
 	  a gap between _CLASS and _DRIVER

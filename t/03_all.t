@@ -6,7 +6,7 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 19;
+use Test::More tests => 20;
 use File::Spec::Functions ':ALL';
 BEGIN {
 	use_ok( 'Params::Util', ':ALL' );
@@ -22,6 +22,7 @@ BEGIN {
 ok( defined &_IDENTIFIER, '_IDENTIFIER imported ok' );
 ok( defined &_CLASS,      '_CLASS imported ok'      );
 ok( defined &_POSINT,     '_POSINT imported ok'     );
+ok( defined &_NONNEGINT,  '_NONNEGINT imported ok'  );
 ok( defined &_SCALAR,     '_SCALAR imported ok'     );
 ok( defined &_SCALAR0,    '_SCALAR0 imported ok'    );
 ok( defined &_ARRAY,      '_ARRAY imported ok'      );

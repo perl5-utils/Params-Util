@@ -6,7 +6,7 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 494;
+use Test::More tests => 534;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -221,9 +221,60 @@ foreach my $id ( qw{1 2 10 123456789} ) {
 
 
 #####################################################################
+# Tests for _NONNEGINT
+
+# Test bad things against the actual function
+dies( "Params::Util::_NONNEGINT()", qr/Not enough arguments/, '...::_NONNEGINT() dies' );
+null( Params::Util::_NONNEGINT(undef),        '...::_NONNEGINT(undef) returns undef' );
+null( Params::Util::_NONNEGINT(''),           '...::_NONNEGINT(nullstring) returns undef' );
+null( Params::Util::_NONNEGINT(' foo'),       '...::_NONNEGINT(string) returns undef' );
+null( Params::Util::_NONNEGINT({ foo => 1 }), '...::_NONNEGINT(HASH) returns undef' );
+null( Params::Util::_NONNEGINT(sub () { 1 }), '...::_NONNEGINT(CODE) returns undef' );
+null( Params::Util::_NONNEGINT([]),           '...::_NONNEGINT(ARRAY) returns undef' );
+null( Params::Util::_NONNEGINT(\""),          '...::_NONNEGINT(null constant) returns undef' );
+null( Params::Util::_NONNEGINT(\"foo"),       '...::_NONNEGINT(SCALAR) returns undef' );
+null( Params::Util::_NONNEGINT("D'oh"),       '...::_NONNEGINT(bad class) returns undef' );
+null( Params::Util::_NONNEGINT(-1),           '...::_NONNEGINT(negative) returns undef' );
+null( Params::Util::_NONNEGINT("+1"),         '...::_NONNEGINT(explicit positive) returns undef' );
+null( Params::Util::_NONNEGINT("02"),         '...::_NONNEGINT(zero lead) returns undef' );
+
+# Test good things against the actual function (carefully)
+foreach my $id ( qw{0 1 2 10 123456789} ) {
+	is( Params::Util::_NONNEGINT($id), $id, "...::_NONNEGINT('$id') returns ok" );
+}
+
+# Import the function
+use_ok( 'Params::Util', '_NONNEGINT' );
+ok( defined *_NONNEGINT{CODE}, '_NONNEGINT imported ok' );
+
+# Test bad things against the actual function
+dies( "_NONNEGINT()", qr/Not enough arguments/, '_NONNEGINT() dies' );
+null( _NONNEGINT(undef),        '_NONNEGINT(undef) returns undef' );
+null( _NONNEGINT(''),           '_NONNEGINT(nullstring) returns undef' );
+null( _NONNEGINT(' foo'),       '_NONNEGINT(string) returns undef' );
+null( _NONNEGINT({ foo => 1 }), '_NONNEGINT(HASH) returns undef' );
+null( _NONNEGINT(sub () { 1 }), '_NONNEGINT(CODE) returns undef' );
+null( _NONNEGINT([]),           '_NONNEGINT(ARRAY) returns undef' );
+null( _NONNEGINT(\""),          '_NONNEGINT(null constant) returns undef' );
+null( _NONNEGINT(\"foo"),       '_NONNEGINT(SCALAR) returns undef' );
+null( _NONNEGINT("D'oh"),       '_NONNEGINT(bad class) returns undef' );
+null( _NONNEGINT(-1),           '_NONNEGINT(negative) returns undef' );
+null( _NONNEGINT("+1"),           '_NONNEGINT(explicit positive) returns undef' );
+null( _NONNEGINT("02"),         '_NONNEGINT(zero lead) returns undef' );
+
+# Test good things against the actual function (carefully)
+foreach my $id ( qw{0 1 2 10 123456789} ) {
+	is( _NONNEGINT($id), $id, "_NONNEGINT('$id') returns ok" );
+}
+
+
+
+
+
+#####################################################################
 # Tests for _SCALAR
 
-my $foo = "foo";
+my $foo    = "foo";
 my $scalar = \$foo;
 
 # Test bad things against the actual function
