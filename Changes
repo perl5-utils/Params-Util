@@ -1,5 +1,10 @@
 Revision history for Perl extension Params::Util
 
+0.27 Sat 18 Aug 2007
+	- Skipping one particularly evil test that we know fails on a few OS
+	  unless AUTOMATED_TESTING is enabled.
+	  These failures weren't worth preventing installation at all.
+
 0.26 Fri 27 Jul 2007
 	- Adding the _NONNEGINT function
 

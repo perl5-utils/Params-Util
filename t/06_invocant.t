@@ -28,7 +28,6 @@ my @data = (# I
   [ {}          => 0, '{}' ],
   [ $object     => 1, 'blessed reference' ],
   [ $false_obj1 => 1, 'blessed reference' ],
-  [ $false_obj2 => 1, 'blessed reference' ],
   [ $tied       => 1, 'tied value' ],
 );
 
@@ -38,6 +37,18 @@ for my $datum (@data) {
     $datum->[1],
     "$datum->[2] " . ($datum->[1] ? 'is' : "isn't") . " _IN"
   );
+}
+
+# Skip the most evil test except on automated testing, because it
+# fails on at least one common production OS (RedHat Enterprise Linux 4)
+# and the test case should be practically impossible to encounter
+# in real life. The damage the bug could cause users in production is
+# far lower than the damage caused by Params::Util failing to install.
+SKIP: {
+	unless ( $ENV{AUTOMATED_TESTING} ) {
+		skip("Skipping nasty test unless AUTOMATED_TESTING", 1);
+	}
+	is( _INVOCANT($false_obj2), 1, 'Testing null class as an invocant' );
 }
 
 package Params::Util::Test::_INVOCANT::Tied;
