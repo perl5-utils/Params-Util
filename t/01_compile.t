@@ -10,7 +10,7 @@ use Test::More tests => 5;
 use File::Spec::Functions ':ALL';
 
 # Check their perl version
-ok( $] >= 5.005, "Your perl is new enough" );
+ok( $] >= 5.004, "Your perl is new enough" );
 
 # Does the module load
 use_ok('Params::Util');

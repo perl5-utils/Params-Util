@@ -1,5 +1,8 @@
 Revision history for Perl extension Params::Util
 
+0.28 Sat 18 Aug 2007
+	- Dropping the Perl version requirement in 01_compile.t to 5.004
+
 0.27 Sat 18 Aug 2007
 	- Skipping one particularly evil test that we know fails on a few OS
 	  unless AUTOMATED_TESTING is enabled.
