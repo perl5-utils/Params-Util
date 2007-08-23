@@ -1,5 +1,10 @@
 Revision history for Perl extension Params::Util
 
+0.29 Thu 23 Aug 2007
+	- Correcting a test which only ran under AUTOMATED_TESTING,
+	  apparently my release automation isn't doing what I think
+	  it is doing.
+
 0.28 Sat 18 Aug 2007
 	- Dropping the Perl version requirement in 01_compile.t to 5.004
 

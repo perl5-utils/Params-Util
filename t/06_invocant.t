@@ -48,7 +48,7 @@ SKIP: {
 	unless ( $ENV{AUTOMATED_TESTING} ) {
 		skip("Skipping nasty test unless AUTOMATED_TESTING", 1);
 	}
-	is( _INVOCANT($false_obj2), 1, 'Testing null class as an invocant' );
+	ok( !! _INVOCANT($false_obj2), 'Testing null class as an invocant' );
 }
 
 package Params::Util::Test::_INVOCANT::Tied;
