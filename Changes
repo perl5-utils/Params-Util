@@ -1,5 +1,9 @@
 Revision history for Perl extension Params::Util
 
+0.30 Mon 22 Oct 2007
+	- Incremental release to get a newer and non-broken version of the
+	  author-only tests.
+
 0.29 Thu 23 Aug 2007
 	- Correcting a test which only ran under AUTOMATED_TESTING,
 	  apparently my release automation isn't doing what I think
