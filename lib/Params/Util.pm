@@ -56,7 +56,7 @@ additions to C<Params::Util> may clash)
 =cut
 
 BEGIN {
-	require 5.004;
+	require 5.005;
 }
 use strict;
 use overload     ();

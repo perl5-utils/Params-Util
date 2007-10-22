@@ -2,7 +2,7 @@ use strict;
 use inc::Module::Install;
 
 name           'Params-Util';
-perl_version   '5.004';
+perl_version   '5.005';
 all_from       'lib/Params/Util.pm';
 requires       'Exporter'     => 0;
 requires       'Scalar::Util' => can_cc() ? '1.14' : '1.10';
