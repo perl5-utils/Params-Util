@@ -1,5 +1,8 @@
 Revision history for Perl extension Params::Util
 
+0.31 Wed 14 Nov 2007
+	- Upgrading to Module::Install 0.68
+
 0.30 Mon 22 Oct 2007
 	- Incremental release to get a newer and non-broken version of the
 	  author-only tests.
