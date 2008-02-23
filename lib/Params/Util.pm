@@ -65,13 +65,13 @@ use Scalar::Util ();
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-	$VERSION   = '0.31';
+	$VERSION   = '0.32_01';
 	@ISA       = 'Exporter';
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER
 		_CLASS      _CLASSISA   _SUBCLASS  _DRIVER
-		_POSINT     _NONNEGINT
+		_NUMBER     _POSINT     _NONNEGINT
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0     _ARRAYLIKE
 		_HASH       _HASH0      _HASHLIKE
@@ -204,6 +204,28 @@ C<undef> if not.
 
 sub _SUBCLASS ($$) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
+}
+
+=pod
+
+=head2 _NUMBER $scalar
+
+The C<_NUMBER> function is intended to be imported into your
+package, and provides a convenient way to test to see if a value is
+a number. That is, it is defined and perl thinks it's a number.
+
+This function is basically a Params::Util-style wrapper around the
+L<Scalar::Util> C<looks_like_number> function.
+
+Returns the value as a convience, or C<undef> if the value is not a
+number.
+
+=cut
+
+sub _NUMBER ($) {
+	( defined $_[0] and ! ref $_[0] and Scalar::Util::looks_like_number($_[0]) )
+	? $_[0]
+	: undef;
 }
 
 =pod
@@ -477,12 +499,6 @@ sub _CODELIKE {
 		Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
 	)
 	? $_[0] : undef;
-}
-
-# Will stay around until end-2006 with a warning, then will be deleted.
-sub _CALLABLE {
-	warn "_CALLABLE has been deprecated. Change to _CODELIKE";
-	_CODELIKE(@_);
 }
 
 =pod

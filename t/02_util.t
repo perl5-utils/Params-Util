@@ -6,7 +6,7 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 534;
+use Test::More tests => 580;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -161,6 +161,51 @@ null( _CLASS("1::X"),       '_CLASS(bad class) returns undef' );
 # Test good things against the actual function (carefully)
 foreach my $ident ( qw{foo _foo foo1 __foo_1 Foo::Bar _Foo::Baaar::Baz X::1} ) {
 	is( _CLASS($ident), $ident, "_CLASS('$ident') returns ok" );
+}
+
+
+
+
+
+#####################################################################
+# Tests for _NUMBER
+
+# Test bad things against the actual function
+dies( "Params::Util::_NUMBER()", qr/Not enough arguments/, '...::_NUMBER() dies' );
+null( Params::Util::_NUMBER(undef),        '...::_NUMBER(undef) returns undef' );
+null( Params::Util::_NUMBER(''),           '...::_NUMBER(nullstring) returns undef' );
+null( Params::Util::_NUMBER(' foo'),       '...::_NUMBER(string) returns undef' );
+null( Params::Util::_NUMBER({ foo => 1 }), '...::_NUMBER(HASH) returns undef' );
+null( Params::Util::_NUMBER(sub () { 1 }), '...::_NUMBER(CODE) returns undef' );
+null( Params::Util::_NUMBER([]),           '...::_NUMBER(ARRAY) returns undef' );
+null( Params::Util::_NUMBER(\""),          '...::_NUMBER(null constant) returns undef' );
+null( Params::Util::_NUMBER(\"foo"),       '...::_NUMBER(SCALAR) returns undef' );
+null( Params::Util::_NUMBER("D'oh"),       '...::_NUMBER(bad class) returns undef' );
+
+# Test good things against the actual function (carefully)
+foreach my $id ( qw{1 2 10 123456789 -1 0 +1 02 .1 0.013e-3 1e1} ) {
+	is( Params::Util::_NUMBER($id), $id, "...::_NUMBER('$id') returns ok" );
+}
+
+# Import the function
+use_ok( 'Params::Util', '_NUMBER' );
+ok( defined *_NUMBER{CODE}, '_NUMBER imported ok' );
+
+# Test bad things against the actual function
+dies( "_NUMBER()", qr/Not enough arguments/, '_NUMBER() dies' );
+null( _NUMBER(undef),        '_NUMBER(undef) returns undef' );
+null( _NUMBER(''),           '_NUMBER(nullstring) returns undef' );
+null( _NUMBER(' foo'),       '_NUMBER(string) returns undef' );
+null( _NUMBER({ foo => 1 }), '_NUMBER(HASH) returns undef' );
+null( _NUMBER(sub () { 1 }), '_NUMBER(CODE) returns undef' );
+null( _NUMBER([]),           '_NUMBER(ARRAY) returns undef' );
+null( _NUMBER(\""),          '_NUMBER(null constant) returns undef' );
+null( _NUMBER(\"foo"),       '_NUMBER(SCALAR) returns undef' );
+null( _NUMBER("D'oh"),       '_NUMBER(bad class) returns undef' );
+
+# Test good things against the actual function (carefully)
+foreach my $id ( qw{1 2 10 123456789 -1 0 +1 02 .1 0.013e-3 1e1} ) {
+	is( _NUMBER($id), $id, "_NUMBER('$id') returns ok" );
 }
 
 

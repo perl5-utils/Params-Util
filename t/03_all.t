@@ -21,6 +21,7 @@ BEGIN {
 
 ok( defined &_IDENTIFIER, '_IDENTIFIER imported ok' );
 ok( defined &_CLASS,      '_CLASS imported ok'      );
+ok( defined &_NUMBER,     '_NUMBER imported ok'     );
 ok( defined &_POSINT,     '_POSINT imported ok'     );
 ok( defined &_NONNEGINT,  '_NONNEGINT imported ok'  );
 ok( defined &_SCALAR,     '_SCALAR imported ok'     );
@@ -32,7 +33,6 @@ ok( defined &_HASH,       '_HASH imported ok'       );
 ok( defined &_HASH0,      '_HASH0 imported ok'      );
 ok( defined &_HASHLIKE,   '_HASHLIKE imported ok'   );
 ok( defined &_CODE,       '_CODE imported ok'       );
-ok( defined &_CALLABLE,   '_CALLABLE imported ok'   );
 ok( defined &_CODELIKE,   '_CODELIKE imported ok'   );
 ok( defined &_INSTANCE,   '_INSTANCE imported ok'   );
 ok( defined &_SET,        '_SET imported ok'        );
