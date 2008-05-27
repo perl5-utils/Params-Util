@@ -89,7 +89,7 @@ is( _DRIVER('A', 'A'), undef, 'A: Driver base class is undef' );
 ok( $A::VERSION, 'A: Class is loaded ok' );
 is( _DRIVER('My_B', 'A'), 'My_B',   'B: Good driver returns ok' );
 is( _DRIVER('My_B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
-ok( $B::VERSION, 'B: Class is loaded ok' );
+ok( $My_B::VERSION, 'B: Class is loaded ok' );
 is( _DRIVER('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _DRIVER('D', 'A'), undef, 'D: Broken driver is undef' );
 is( _DRIVER('E', 'A'), undef, 'E: Not a driver returns undef' );
