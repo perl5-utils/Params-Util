@@ -3,6 +3,7 @@ Revision history for Perl extension Params::Util
 0.33 Tue 27 May 2008
 	- Upgrading to Module::Install 0.74
 	- Bumping Scalar::Util version to 1.18 to get a fixed better looks_like_number
+	- Moved B driver test class to My_B to prevent collision with the B modules
 
 0.32_01 Sat 23 Feb 2008
 	- Moving 01_compile.t minimum version to 5.005 to match Makefile.PL
