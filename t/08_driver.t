@@ -30,8 +30,8 @@ use Scalar::Util 'refaddr';
 
 my $A = catfile( 't', 'driver', 'A.pm' );
 ok( -f $A, 'A exists' );
-my $B = catfile( 't', 'driver', 'B.pm' );
-ok( -f $B, 'B exists' );
+my $B = catfile( 't', 'driver', 'My_B.pm' );
+ok( -f $B, 'My_B exists' );
 my $C = catfile( 't', 'driver', 'C.pm' );
 ok( ! -f $C, 'C does not exist' );
 my $D = catfile( 't', 'driver', 'D.pm' );
@@ -68,8 +68,8 @@ foreach (
 
 # classisa should not load classes
 is( _CLASSISA('A', 'A'), 'A',   'A: Driver base class is undef' );
-is( _CLASSISA('B', 'A'), undef, 'B: Good driver returns ok' );
-is( _CLASSISA('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _CLASSISA('My_B', 'A'), undef, 'B: Good driver returns ok' );
+is( _CLASSISA('My_B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
 is( _CLASSISA('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _CLASSISA('D', 'A'), undef, 'D: Broken driver is undef' );
 is( _CLASSISA('E', 'A'), undef, 'E: Not a driver returns undef' );
@@ -77,8 +77,8 @@ is( _CLASSISA('F', 'A'), undef, 'F: Faked isa returns ok' );
 
 # classisa should not load classes
 is( _SUBCLASS('A', 'A'), undef, 'A: Driver base class is undef' );
-is( _SUBCLASS('B', 'A'), undef, 'B: Good driver returns ok' );
-is( _SUBCLASS('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _SUBCLASS('My_B', 'A'), undef, 'B: Good driver returns ok' );
+is( _SUBCLASS('My_B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
 is( _SUBCLASS('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _SUBCLASS('D', 'A'), undef, 'D: Broken driver is undef' );
 is( _SUBCLASS('E', 'A'), undef, 'E: Not a driver returns undef' );
@@ -87,8 +87,8 @@ is( _SUBCLASS('F', 'A'), undef, 'F: Faked isa returns ok' );
 # The base class itself is not a driver
 is( _DRIVER('A', 'A'), undef, 'A: Driver base class is undef' );
 ok( $A::VERSION, 'A: Class is loaded ok' );
-is( _DRIVER('B', 'A'), 'B',   'B: Good driver returns ok' );
-is( _DRIVER('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _DRIVER('My_B', 'A'), 'My_B',   'B: Good driver returns ok' );
+is( _DRIVER('My_B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
 ok( $B::VERSION, 'B: Class is loaded ok' );
 is( _DRIVER('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _DRIVER('D', 'A'), undef, 'D: Broken driver is undef' );
@@ -97,8 +97,8 @@ is( _DRIVER('F', 'A'), 'F',   'F: Faked isa returns ok' );
 
 # Repeat for classisa
 is( _CLASSISA('A', 'A'), 'A',   'A: Driver base class is undef' );
-is( _CLASSISA('B', 'A'), 'B',   'B: Good driver returns ok' );
-is( _CLASSISA('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _CLASSISA('My_B', 'A'), 'My_B',   'B: Good driver returns ok' );
+is( _CLASSISA('My_B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
 is( _CLASSISA('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _CLASSISA('D', 'A'), 'D',   'D: Broken driver is undef' );
 is( _CLASSISA('E', 'A'), undef, 'E: Not a driver returns undef' );
@@ -106,8 +106,8 @@ is( _CLASSISA('F', 'A'), 'F',   'F: Faked isa returns ok' );
 
 # Repeat for subclasses
 is( _SUBCLASS('A', 'A'), undef, 'A: Driver base class is undef' );
-is( _SUBCLASS('B', 'A'), 'B',   'B: Good driver returns ok' );
-is( _SUBCLASS('B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
+is( _SUBCLASS('My_B', 'A'), 'My_B',   'B: Good driver returns ok' );
+is( _SUBCLASS('My_B', 'H'), undef, 'B: Good driver return undef for incorrect base' );
 is( _SUBCLASS('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _SUBCLASS('D', 'A'), 'D',   'D: Broken driver is undef' );
 is( _SUBCLASS('E', 'A'), undef, 'E: Not a driver returns undef' );

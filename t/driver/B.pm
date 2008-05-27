@@ -1,4 +1,5 @@
-package B;
+# Don't want to collide with the B:: modules
+package My_B;
 
 # This is our good driver class
 
