@@ -55,16 +55,17 @@ additions to C<Params::Util> may clash)
 
 =cut
 
-use 5.005;
+use 5.00503;
 use strict;
-use overload     ();
-use Exporter     ();
-use Scalar::Util ();
+require overload;
+require Exporter;
+require Scalar::Util;
+require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
-BEGIN {
-	$VERSION   = '0.33';
-	@ISA       = 'Exporter';
+
+	$VERSION   = '0.34_01';
+@ISA       = ('Exporter', 'DynaLoader');
 
 	@EXPORT_OK = qw{
 		_STRING     _IDENTIFIER
@@ -73,15 +74,20 @@ BEGIN {
 		_SCALAR     _SCALAR0
 		_ARRAY      _ARRAY0     _ARRAYLIKE
 		_HASH       _HASH0      _HASHLIKE
-		_CODE       _CODELIKE   _CALLABLE
+    _CODE       _CODELIKE
 		_INVOCANT
+    _REGEX
 		_INSTANCE   _SET        _SET0
 		_HANDLE
 		};
 
 	%EXPORT_TAGS = (ALL => \@EXPORT_OK);
-}
 
+eval {
+    local $ENV{PERL_DL_NONLAZY} = 0 if $ENV{PERL_DL_NONLAZY};
+    bootstrap Params::Util $VERSION;
+    1;
+} if not $ENV{PARAMS_UTIL_PP};
 
 
 
@@ -114,9 +120,11 @@ C<undef> if not.
 
 =cut
 
+eval <<'EOP' if not defined &_STRING;
 sub _STRING ($) {
 	(defined $_[0] and ! ref $_[0] and length($_[0])) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -131,9 +139,11 @@ C<undef> if not.
 
 =cut
 
+eval <<'EOP' if not defined &_IDENTIFIER;
 sub _IDENTIFIER ($) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*$/s) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -152,9 +162,11 @@ C<undef> if not.
 
 =cut
 
+eval <<'EOP' if not defined &_CLASS;
 sub _CLASS ($) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -176,9 +188,11 @@ C<undef> if not.
 
 =cut
 
+eval <<'EOP' if not defined &_CLASSISA;
 sub _CLASSISA ($$) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -200,9 +214,11 @@ C<undef> if not.
 
 =cut
 
+eval <<'EOP' if not defined &_SUBCLASS;
 sub _SUBCLASS ($$) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -220,11 +236,13 @@ number.
 
 =cut
 
+eval <<'EOP' if not defined &_NUMBER;
 sub _NUMBER ($) {
 	( defined $_[0] and ! ref $_[0] and Scalar::Util::looks_like_number($_[0]) )
 	? $_[0]
 	: undef;
 }
+EOP
 
 =pod
 
@@ -242,9 +260,11 @@ name.
 
 =cut
 
+eval <<'EOP' if not defined &_POSINT;
 sub _POSINT ($) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[1-9]\d*$/) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -270,9 +290,11 @@ name.
 
 =cut
 
+eval <<'EOP' if not defined &_NONNEGINT;
 sub _NONNEGINT ($) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^(?:0|[1-9]\d*)$/) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -290,9 +312,11 @@ if the value provided is not a C<SCALAR> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_SCALAR;
 sub _SCALAR ($) {
 	(ref $_[0] eq 'SCALAR' and defined ${$_[0]} and ${$_[0]} ne '') ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -310,9 +334,11 @@ if the value provided is not a C<SCALAR> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_SCALAR0;
 sub _SCALAR0 ($) {
 	ref $_[0] eq 'SCALAR' ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -330,9 +356,11 @@ if the value provided is not an C<ARRAY> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_ARRAY;
 sub _ARRAY ($) {
 	(ref $_[0] eq 'ARRAY' and @{$_[0]}) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -351,9 +379,11 @@ if the value provided is not an C<ARRAY> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_ARRAY0;
 sub _ARRAY0 ($) {
 	ref $_[0] eq 'ARRAY' ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -365,6 +395,7 @@ C<_ARRAYLIKE> returns C<undef>.
 
 =cut
 
+eval <<'EOP' if not defined &_ARRAYLIKE;
 sub _ARRAYLIKE {
 	(defined $_[0] and ref $_[0] and (
 		(Scalar::Util::reftype($_[0]) eq 'ARRAY')
@@ -372,6 +403,7 @@ sub _ARRAYLIKE {
 		overload::Method($_[0], '@{}')
 	)) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -389,9 +421,11 @@ if the value provided is not an C<HASH> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_HASH;
 sub _HASH ($) {
 	(ref $_[0] eq 'HASH' and scalar %{$_[0]}) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -409,9 +443,11 @@ if the value provided is not an C<HASH> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_HASH0;
 sub _HASH0 ($) {
 	ref $_[0] eq 'HASH' ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -423,6 +459,7 @@ C<_HASHLIKE> returns C<undef>.
 
 =cut
 
+eval <<'EOP' if not defined &_HASHLIKE;
 sub _HASHLIKE {
 	(defined $_[0] and ref $_[0] and (
 		(Scalar::Util::reftype($_[0]) eq 'HASH')
@@ -430,6 +467,7 @@ sub _HASHLIKE {
 		overload::Method($_[0], '%{}')
 	)) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -444,9 +482,11 @@ if the value provided is not an C<CODE> reference.
 
 =cut
 
+eval <<'EOP' if not defined &_CODE;
 sub _CODE ($) {
 	ref $_[0] eq 'CODE' ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -490,7 +530,8 @@ I apologise for any inconvenience caused.
 
 =cut
 
-sub _CODELIKE {
+eval <<'EOP' if not defined &_CODELIKE;
+sub _CODELIKE($) {
 	(
 		(Scalar::Util::reftype($_[0])||'') eq 'CODE'
 		or
@@ -498,6 +539,7 @@ sub _CODELIKE {
 	)
 	? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -510,7 +552,8 @@ If so, the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
 
 =cut
 
-sub _INVOCANT {
+eval <<'EOP' if not defined &_INVOCANT;
+sub _INVOCANT($) {
 	(defined $_[0] and
 		(defined Scalar::Util::blessed($_[0])
 		or      
@@ -519,6 +562,7 @@ sub _INVOCANT {
 		Params::Util::_CLASS($_[0]))
 	) ? $_[0] : undef;
 }
+EOP
 
 =pod
 
@@ -533,9 +577,29 @@ provided is not an object of that type.
 
 =cut
 
+eval <<'EOP' if not defined &_INSTANCE;
 sub _INSTANCE ($$) {
 	(Scalar::Util::blessed($_[0]) and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
+EOP
+
+=pod
+
+=head2 _REGEX $value
+
+The C<_REGEX> function is intended to be imported into your package,
+and provides a convenient way to test for a regular expression.
+
+Returns the value itself as a convenience, or C<undef> if the value
+provided is not a regular expression.
+
+=cut
+
+eval <<'EOP' if not defined &_REGEX;
+sub _INSTANCE ($$) {
+	(defined $_[0] and 'Regexp' eq ref($_[0])) ? $_[0] : undef;
+}
+EOP
 
 =pod
 
@@ -556,14 +620,17 @@ the value provided is not a set of that class.
 
 =cut
 
+eval <<'EOP' if not defined &_SET;
 sub _SET ($$) {
 	my $set = shift;
-	ref $set eq 'ARRAY' and @$set or return undef;
-	foreach ( @$set ) {
-		Scalar::Util::blessed($_) and $_->isa($_[0]) or return undef;
+#	ref $set eq 'ARRAY' and @$set or return undef;
+	_ARRAY($set) or return undef;
+	foreach my $item ( @$set ) {
+		_INSTANCE($item,$_[0]) or return undef;
 	}
 	$set;
 }
+EOP
 
 =pod
 
@@ -584,14 +651,17 @@ the value provided is not a set of that class.
 
 =cut
 
+eval <<'EOP' if not defined &_SET0;
 sub _SET0 ($$) {
 	my $set = shift;
-	ref $set eq 'ARRAY' or return undef;
-	foreach ( @$set ) {
-		Scalar::Util::blessed($_) and $_->isa($_[0]) or return undef;
+#	ref $set eq 'ARRAY' or return undef;
+	_ARRAY0($set) or return undef;
+	foreach my $item ( @$set ) {
+		_INSTANCE($item,$_[0]) or return undef;
 	}
 	$set;
 }
+EOP
 
 =pod
 
@@ -616,6 +686,7 @@ detectors in existance (and we stole from the best of them).
 # we'll compress this into something that compiles more efficiently.
 # Further, testing file handles is not something that is generally
 # done millions of times, so doing it slowly is not a big speed hit.
+eval <<'EOP' if not defined &_HANDLE;
 sub _HANDLE {
 	my $it = shift;
 
@@ -666,6 +737,7 @@ sub _HANDLE {
 	# This is not any sort of object we know about
 	return undef;
 }
+EOP
 
 =pod
 
@@ -693,9 +765,11 @@ or the class fails the isa test.
 
 =cut
 
+eval <<'EOP' if not defined &_DRIVER;
 sub _DRIVER ($$) {
 	(defined _CLASS($_[0]) and eval "require $_[0];" and ! $@ and $_[0]->isa($_[1]) and $_[0] ne $_[1]) ? $_[0] : undef;
 }
+EOP
 
 1;
 
@@ -706,8 +780,6 @@ sub _DRIVER ($$) {
 - Add _CAN to help resolve the UNIVERSAL::can debacle
 
 - More comprehensive tests for _SET and _SET0
-
-- Would be nice if someone would re-implement in XS for me? (done'ish)
 
 - Would be even nicer if someone would demonstrate how the hell to
 build a Module::Install dist of the ::Util dual Perl/XS type. :/

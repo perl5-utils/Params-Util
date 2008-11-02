@@ -1,4 +1,7 @@
-Revision history for Perl extension Params::Util
+Revision history for Perl extension Params-Util
+
+0.34_01 Mon  3 Nov 2008
+	- Adding experimental XS implementation by the awesome Jens Renhack
 
 0.33 Tue 27 May 2008
 	- Upgrading to Module::Install 0.74

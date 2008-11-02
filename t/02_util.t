@@ -6,7 +6,7 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 580;
+use Test::More tests => 582;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -384,6 +384,7 @@ null( Params::Util::_SCALAR0([]),           '...::_SCALAR0(ARRAY) returns undef'
 # Test good things against the actual function (carefully)
 is( ref(Params::Util::_SCALAR0(\"foo")),  'SCALAR', '...::_SCALAR0(constant) returns true' );
 is( ref(Params::Util::_SCALAR0(\"")),  'SCALAR', '...::_SCALAR0(constant) returns true' );
+is( ref(Params::Util::_SCALAR0(\undef)),  'SCALAR', '...::_SCALAR0(\undef) returns true' );
 is( ref(Params::Util::_SCALAR0($scalar)), 'SCALAR', "...::_SCALAR0(constant) returns true" );
 is( ref(Params::Util::_SCALAR0($scalar0)), 'SCALAR', "...::_SCALAR0(constant) returns true" );
 is( refaddr(Params::Util::_SCALAR0($scalar)), refaddr($scalar),
@@ -408,6 +409,7 @@ null( _SCALAR0([]),           '...::_SCALAR0(ARRAY) returns undef' );
 # Test good things against the actual function (carefully)
 is( ref(_SCALAR0(\"foo")),  'SCALAR', '...::_SCALAR0(constant) returns true' );
 is( ref(_SCALAR0(\"")),  'SCALAR', '...::_SCALAR0(constant) returns true' );
+is( ref(_SCALAR0(\undef)),  'SCALAR', '...::_SCALAR0(\undef) returns true' );
 is( ref(_SCALAR0($scalar)), 'SCALAR', "...::_SCALAR0(constant) returns true" );
 is( ref(_SCALAR0($scalar0)), 'SCALAR', "...::_SCALAR0(constant) returns true" );
 is( refaddr(_SCALAR0($scalar)), refaddr($scalar),

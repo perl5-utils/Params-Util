@@ -6,6 +6,8 @@ BEGIN {
 	$^W = 1;
 }
 
+sub _CODELIKE($);
+
 use Test::More;
 use File::Spec::Functions ':ALL';
 use Scalar::Util qw(
