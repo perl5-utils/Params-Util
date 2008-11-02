@@ -44,7 +44,7 @@ sub write_makefile {
 		},
 
 		ABSTRACT_FROM => 'lib/Params/Util.pm', 
-		AUTHOR	      => 'Adam Kennedy <adamk@cpan.org>'
+		AUTHOR	      => 'Adam Kennedy <adamk@cpan.org>',
 
 		# otherwise 'cxinc' isn't defined
 		DEFINE	      => '-DPERL_EXT', 
