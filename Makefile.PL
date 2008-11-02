@@ -35,6 +35,8 @@ EDQ
 
 sub write_makefile {
 	WriteMakefile(
+		# We created out own META.yml
+		NO_META       => 1,
 		NAME          => 'Params::Util',
 		VERSION_FROM  => 'lib/Params/Util.pm',
 		PREREQ_PM     => {
