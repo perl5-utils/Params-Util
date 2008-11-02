@@ -1,4 +1,6 @@
-use 5.00503;
+# This is intended to be equivalent to the Module::Install version below
+
+use 5.005;
 use ExtUtils::MakeMaker;
 use Config;
 
@@ -32,21 +34,23 @@ EDQ
 }
 
 sub write_makefile {
-    WriteMakefile(
-	NAME		    => 'Params::Util',
-	VERSION_FROM	=> 'lib/Params/Util.pm', 
-	PREREQ_PM	    => {
-        'Scalar::Util' => '1.18',
-        'Test::More'   => '0.42',
-        'File::Spec'   => '0.80',
-    }, 
-	($] >= 5.005 ?     
-	  (ABSTRACT_FROM    => 'lib/Params/Util.pm', 
-	   AUTHOR	    => 'Adam Kennedy <adamk@cpan.org>') : ()),
-	DEFINE		    => '-DPERL_EXT',	# otherwise 'cxinc' isn't defined 
-	CONFIGURE	    => \&init,
-	clean		    => { FILES => 'test.c' }
-    );
+	WriteMakefile(
+		NAME          => 'Params::Util',
+		VERSION_FROM  => 'lib/Params/Util.pm',
+		PREREQ_PM     => {
+			'Scalar::Util' => '1.18',
+			'Test::More'   => '0.42',
+			'File::Spec'   => '0.80',
+		},
+
+		ABSTRACT_FROM => 'lib/Params/Util.pm', 
+		AUTHOR	      => 'Adam Kennedy <adamk@cpan.org>'
+
+		# otherwise 'cxinc' isn't defined
+		DEFINE	      => '-DPERL_EXT', 
+		CONFIGURE     => \&init,
+		clean         => { FILES => 'test.c' }
+	);
 }
 
 write_makefile();
