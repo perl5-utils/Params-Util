@@ -55,7 +55,7 @@ additions to C<Params::Util> may clash)
 
 =cut
 
-use 5.005;
+use 5.00503;
 use strict;
 require overload;
 require Exporter;

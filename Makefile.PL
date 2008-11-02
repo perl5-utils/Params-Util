@@ -1,6 +1,6 @@
 # This is intended to be equivalent to the Module::Install version below
 
-use 5.005;
+use 5.00503;
 use ExtUtils::MakeMaker;
 use Config;
 

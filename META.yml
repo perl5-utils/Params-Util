@@ -19,5 +19,5 @@ no_index:
     - t
 requires:
   Scalar::Util: 1.18
-  perl: 5.005
+  perl: 5.00503
 version: 0.34_01
