@@ -64,7 +64,7 @@ require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
-	$VERSION   = '0.34_01';
+	$VERSION   = '0.35';
 @ISA       = ('Exporter', 'DynaLoader');
 
 	@EXPORT_OK = qw{
@@ -88,6 +88,7 @@ eval {
     bootstrap Params::Util $VERSION;
     1;
 } if not $ENV{PARAMS_UTIL_PP};
+
 
 
 
