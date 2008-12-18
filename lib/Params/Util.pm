@@ -504,7 +504,7 @@ almost always end up also testing it in 'bool' context at some stage.
 For example:
 
   sub foo {
-      my $coed1 = _CODELIKE(shift) or die "No code param provided";
+      my $code1 = _CODELIKE(shift) or die "No code param provided";
       my $code2 = _CODELIKE(shift);
       if ( $code2 ) {
            print "Got optional second code param";
