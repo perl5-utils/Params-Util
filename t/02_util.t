@@ -4,9 +4,10 @@ use strict;
 BEGIN {
 	$|  = 1;
 	$^W = 1;
+	$ENV{PERL_PARAMS_UTIL_PP} ||= 0;
 }
 
-use Test::More tests => 582;
+use Test::More tests => 610;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -536,9 +537,11 @@ null( Params::Util::_HASH({}),           '...::_HASH(empty HASH) returns undef' 
 # Test good things against the actual function (carefully)
 is( ref(Params::Util::_HASH({ foo => 1 })), 'HASH', '...::_HASH([undef]) returns ok' );
 is( ref(Params::Util::_HASH($hash)), 'HASH', '...::_HASH returns an HASH ok' );
-is( refaddr(Params::Util::_HASH($hash)),
-    refaddr($hash),
-    '...::_HASH($hash) returns the same reference');
+is(
+	refaddr(Params::Util::_HASH($hash)),
+	refaddr($hash),
+	'...::_HASH($hash) returns the same reference',
+);
 
 # Import the function
 use_ok( 'Params::Util', '_HASH' );
@@ -558,9 +561,11 @@ null( _HASH({}),           '...::_HASH(empty HASH) returns undef' );
 # Test good things against the actual function (carefully)
 is( ref(_HASH({ foo => 1 })), 'HASH', '_HASH([undef]) returns true' );
 is( ref(_HASH($hash)), 'HASH', '_HASH returns an ARRAY ok' );
-is( refaddr(_HASH($hash)),
-    refaddr($hash),
-    '_HASH($hash) returns the same reference');
+is(
+	refaddr(_HASH($hash)),
+	refaddr($hash),
+	'_HASH($hash) returns the same reference',
+);
 
 
 
@@ -583,9 +588,11 @@ null( Params::Util::_HASH0(sub () { 1 }), '...::_HASH0(CODE) returns undef' );
 is( ref(Params::Util::_HASH0({})),         'HASH', '...::_HASH0(empty ARRAY) returns undef' );
 is( ref(Params::Util::_HASH0({ foo => 1 })), 'HASH', '...::_HASH0([undef]) returns true' );
 is( ref(Params::Util::_HASH0($hash)), 'HASH', '...::_HASH0 returns an ARRAY ok' );
-is( refaddr(Params::Util::_HASH0($hash)),
-    refaddr($hash),
-    '...::_HASH0($hash) returns the same reference');
+is(
+	refaddr(Params::Util::_HASH0($hash)),
+	refaddr($hash),
+	'...::_HASH0($hash) returns the same reference',
+);
 
 # Import the function
 use_ok( 'Params::Util', '_HASH0' );
@@ -605,9 +612,11 @@ null( _HASH0(sub () { 1 }), '_HASH0(CODE) returns undef' );
 is( ref(_HASH0({})),            'HASH', '_HASH0(empty ARRAY) returns undef' );
 is( ref(_HASH0({ foo => 1 })), 'HASH', '_HASH0([undef]) returns true' );
 is( ref(_HASH0($hash)), 'HASH', '_HASH0 returns an ARRAY ok' );
-is( refaddr(_HASH0($hash)),
-    refaddr($hash),
-    '_HASH0($hash) returns the same reference');
+is(
+	refaddr(_HASH0($hash)),
+	refaddr($hash),
+	'_HASH0($hash) returns the same reference',
+);
 
 
 
@@ -732,8 +741,47 @@ foreach my $object ( @objects ) {
 	is( refaddr(_INSTANCE($object, 'Foo')), refaddr($object), '_INSTANCE(object, class) returns the same object' );
 }
 
-	
-	
+
+
+
+
+#####################################################################
+# Tests for _REGEX
+
+# Test bad things against the actual function
+dies( "Params::Util::_REGEX();", qr/Not enough arguments/, '...::_REGEX() dies' );
+null( Params::Util::_REGEX(undef),        '...::_REGEX(undef)   returns undef' );
+null( Params::Util::_REGEX(''),           '...::_REGEX(STRING0) returns undef' );
+null( Params::Util::_REGEX(1),            '...::_REGEX(number)  returns undef' );
+null( Params::Util::_REGEX('foo'),        '...::_REGEX(string)  returns undef' );
+null( Params::Util::_REGEX(\'foo'),       '...::_REGEX(SCALAR)  returns undef' );
+null( Params::Util::_REGEX([ 'foo' ]),    '...::_REGEX(ARRAY)   returns undef' );
+null( Params::Util::_REGEX(sub () { 1 }), '...::_REGEX(CODE)    returns undef' );
+null( Params::Util::_REGEX({}),           '...::_REGEX(HASH0)   returns undef' );
+null( Params::Util::_REGEX({ foo => 1 }), '...::_REGEX(HASH)    returns undef' );
+ok(   Params::Util::_REGEX(qr//),         '...::_REGEX(qr//) ok' );
+ok(   Params::Util::_REGEX(qr/foo/),      '...::_REGEX(qr//) ok' );
+
+# Import the function
+use_ok( 'Params::Util', '_REGEX' );
+ok( defined *_REGEX{CODE}, '_REGEX imported ok' );
+
+# Test bad things against the actual function
+dies( "_REGEX();", qr/Not enough arguments/, '_REGEX() dies' );
+null( _REGEX(undef),        '_REGEX(undef)   returns undef' );
+null( _REGEX(''),           '_REGEX(STRING0) returns undef' );
+null( _REGEX(1),            '_REGEX(number)  returns undef' );
+null( _REGEX('foo'),        '_REGEX(string)  returns undef' );
+null( _REGEX(\'foo'),       '_REGEX(SCALAR)  returns undef' );
+null( _REGEX([]),           '_REGEX(ARRAY)   returns undef' );
+null( _REGEX(sub () { 1 }), '_REGEX(CODE)    returns undef' );
+null( _REGEX({}),           'REGEX(HASH0)    returns undef' );
+null( _REGEX({ foo => 1 }), 'REGEX(HASH)     returns undef' );
+ok(   _REGEX(qr//),         '_REGEX(qr//) ok' );
+ok(   _REGEX(qr/foo/),      '_REGEX(qr//) ok' );
+
+
+
 
 
 #####################################################################
@@ -746,7 +794,7 @@ my %set = (
 );
 
 # Test bad things against the actual function
-dies( "Params::Util::_SET()", qr/Not enough arguments/, '...::_SET() dies' );
+dies( "Params::Util::_SET()",   qr/Not enough arguments/, '...::_SET() dies' );
 dies( "Params::Util::_SET([])", qr/Not enough arguments/, '...::_SET(single) dies' );
 null( Params::Util::_SET(undef, 'Foo'),        '...::_SET(undef) returns undef' );
 null( Params::Util::_SET('', 'Foo'),           '...::_SET(nullstring) returns undef' );
@@ -765,7 +813,7 @@ use_ok( 'Params::Util', '_SET' );
 ok( defined *_SET{CODE}, '_SET imported ok' );
 
 # Test bad things against the actual function
-dies( "_SET()", qr/Not enough arguments/, '_SET() dies' );
+dies( "_SET()",   qr/Not enough arguments/, '_SET() dies' );
 dies( "_SET([])", qr/Not enough arguments/, '_SET(single) dies' );
 null( _SET(undef, 'Foo'),        '_SET(undef) returns undef' );
 null( _SET('', 'Foo'),           '_SET(nullstring) returns undef' );
@@ -787,7 +835,7 @@ null( _SET($set{unblessed}, 'Foo'),     '_SET(unblessed ARRAY) returns undef');
 # Tests for _SET0
 
 # Test bad things against the actual function
-dies( "Params::Util::_SET0()", qr/Not enough arguments/, '...::_SET0() dies' );
+dies( "Params::Util::_SET0()",   qr/Not enough arguments/, '...::_SET0() dies' );
 dies( "Params::Util::_SET0([])", qr/Not enough arguments/, '...::_SET0(single) dies' );
 null( Params::Util::_SET0(undef, 'Foo'),        '...::_SET0(undef) returns undef' );
 null( Params::Util::_SET0('', 'Foo'),           '...::_SET0(nullstring) returns undef' );
@@ -806,7 +854,7 @@ use_ok( 'Params::Util', '_SET0' );
 ok( defined *_SET0{CODE}, '_SET0 imported ok' );
 
 # Test bad things against the actual function
-dies( "_SET0()", qr/Not enough arguments/, '_SET0() dies' );
+dies( "_SET0()",   qr/Not enough arguments/, '_SET0() dies' );
 dies( "_SET0([])", qr/Not enough arguments/, '_SET0(single) dies' );
 null( _SET0(undef, 'Foo'),        '_SET0(undef) returns undef' );
 null( _SET0('', 'Foo'),           '_SET0(nullstring) returns undef' );

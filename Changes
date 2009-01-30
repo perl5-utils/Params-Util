@@ -1,5 +1,11 @@
 Revision history for Perl extension Params-Util
 
+0.36 Fri 30 Jan 2009
+	- Fixing the overload for _REGEX
+	- Adding the tests for _REGEX
+	- Reorganising the Makefile.PL
+	- Adding duplicate tests for when the XS version isn't compiled
+
 0.35 Tue 11 Nov 2008
 	- No changes
 	- CPAN Testers results look good, moving to production version

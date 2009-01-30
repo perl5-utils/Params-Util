@@ -18,6 +18,6 @@ no_index:
     - inc
     - t
 requires:
-  Scalar::Util: 1.18
   perl: 5.00503
-version: 0.34_01
+  Scalar::Util: 1.18
+version: 0.36
