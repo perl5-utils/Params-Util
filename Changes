@@ -2,6 +2,7 @@ Revision history for Perl extension Params-Util
 
 0.37 Wed  4 Feb 2009
   - fix _HASH for bleadperl (patch from RAFL)
+  - fix regex (more) for bleadperl (patch from RAFL)
 
 0.36 Fri 30 Jan 2009
 	- Fixing the overload for _REGEX
