@@ -20,4 +20,4 @@ no_index:
 requires:
   perl: 5.00503
   Scalar::Util: 1.18
-version: 0.36
+version: 0.37
