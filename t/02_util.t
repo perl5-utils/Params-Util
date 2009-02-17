@@ -7,7 +7,7 @@ BEGIN {
 	$ENV{PERL_PARAMS_UTIL_PP} ||= 0;
 }
 
-use Test::More tests => 610;
+use Test::More tests => 612;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -85,6 +85,7 @@ null( Params::Util::_IDENTIFIER([]),           '...::_IDENTIFIER(ARRAY) returns 
 null( Params::Util::_IDENTIFIER(\""),          '...::_IDENTIFIER(null constant) returns undef' );
 null( Params::Util::_IDENTIFIER(\"foo"),       '...::_IDENTIFIER(SCALAR) returns undef' );
 null( Params::Util::_IDENTIFIER("Foo::Bar"),   '...::_IDENTIFIER(CLASS) returns undef' );
+null( Params::Util::_IDENTIFIER("foo\n"),      '...::_IDENTIFIER(BAD) returns undef' );
 
 # Test good things against the actual function (carefully)
 foreach my $ident ( qw{foo _foo foo1 __foo_1} ) {
@@ -107,6 +108,7 @@ null( _IDENTIFIER([]),           '_IDENTIFIER(ARRAY) returns undef' );
 null( _IDENTIFIER(\""),          '_IDENTIFIER(null constant) returns undef' );
 null( _IDENTIFIER(\"foo"),       '_IDENTIFIER(SCALAR) returns undef' );
 null( _IDENTIFIER("Foo::Bar"),   '_IDENTIFIER(CLASS) returns undef' );
+null( _IDENTIFIER("foo\n"),      '_IDENTIFIER(BAD) returns undef' );
 
 # Test good things against the actual function (carefully)
 foreach my $ident ( qw{foo _foo foo1 __foo_1} ) {

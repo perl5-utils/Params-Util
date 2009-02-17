@@ -64,7 +64,7 @@ require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
-$VERSION   = '0.37';
+$VERSION   = '0.38';
 @ISA       = ('Exporter', 'DynaLoader');
 @EXPORT_OK = qw{
 	_STRING     _IDENTIFIER
@@ -139,7 +139,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_IDENTIFIER;
 sub _IDENTIFIER ($) {
-	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*$/s) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*\z/s) ? $_[0] : undef;
 }
 END_PERL
 
@@ -162,7 +162,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_CLASS;
 sub _CLASS ($) {
-	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s) ? $_[0] : undef;
 }
 END_PERL
 
@@ -188,7 +188,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_CLASSISA;
 sub _CLASSISA ($$) {
-	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0]->isa($_[1])) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -214,7 +214,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_SUBCLASS;
 sub _SUBCLASS ($$) {
-	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
 END_PERL
 
