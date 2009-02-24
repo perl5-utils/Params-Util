@@ -1,5 +1,9 @@
 Revision history for Perl extension Params-Util
 
+0.39 Tue 24 Feb 2009
+	- Added test for a negative custom isa returning ('')
+	- Improving the 'clean' file list in a Makefile.PL
+
 0.38 Tue 17 Feb 2009
 	- Fix _IDENTIFIER to return false for "foo\n" (ZEFRAM)
 	- Fix _CLASS to return false for "foo\n" (ZEFRAM)

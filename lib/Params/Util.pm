@@ -64,8 +64,11 @@ require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
-$VERSION   = '0.38';
-@ISA       = ('Exporter', 'DynaLoader');
+$VERSION   = '0.39';
+@ISA       = qw{
+	Exporter
+	DynaLoader
+};
 @EXPORT_OK = qw{
 	_STRING     _IDENTIFIER
 	_CLASS      _CLASSISA   _SUBCLASS  _DRIVER
@@ -77,7 +80,7 @@ $VERSION   = '0.38';
 	_INVOCANT   _REGEX      _INSTANCE
 	_SET        _SET0
 	_HANDLE
-	};
+};
 %EXPORT_TAGS = ( ALL => \@EXPORT_OK );
 
 eval {
