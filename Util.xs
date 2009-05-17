@@ -333,42 +333,34 @@ CODE:
     {
         if( sv_isobject(ref) )
         {
-            if( sv_derived_from(ref,type) )
+            I32 isa_type = 0;
+            int count;
+
+            ENTER;
+            SAVETMPS;
+            PUSHMARK(SP);
+            XPUSHs( sv_2mortal( newSVsv( ref ) ) );
+            XPUSHs( sv_2mortal( newSVpv( type, len ) ) );
+            PUTBACK;
+
+            if( ( count = call_method("isa", G_SCALAR) ) )
+            {
+                I32 oldax = ax;
+                SPAGAIN;
+                SP -= count;
+                ax = (SP - PL_stack_base) + 1;
+                isa_type = SvIV(ST(0));
+                ax = oldax;
+            }
+
+            PUTBACK;
+            FREETMPS;
+            LEAVE;
+
+            if( isa_type )
             {
                 ST(0) = ref;
                 XSRETURN(1);
-            }
-            else
-            {
-                I32 isa_type = 0;
-                int count;
-
-                ENTER;
-                SAVETMPS;
-                PUSHMARK(SP);
-                XPUSHs( sv_2mortal( newSVsv( ref ) ) );
-                XPUSHs( sv_2mortal( newSVpv( type, len ) ) );
-                PUTBACK;
-
-                if( ( count = call_method("isa", G_SCALAR) ) )
-                {
-                    I32 oldax = ax;
-                    SPAGAIN;
-                    SP -= count;
-                    ax = (SP - PL_stack_base) + 1;
-                    isa_type = SvIV(ST(0));
-                    ax = oldax;
-                }
-
-                PUTBACK;
-                FREETMPS;
-                LEAVE;
-
-                if( isa_type )
-                {
-                    ST(0) = ref;
-                    XSRETURN(1);
-                }
             }
         }
     }

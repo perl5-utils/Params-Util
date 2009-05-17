@@ -23,7 +23,7 @@ Revision history for Perl extension Params-Util
 	- CPAN Testers results look good, moving to production version
 
 0.34_01 Mon  3 Nov 2008
-	- Adding experimental XS implementation by the awesome Jens Renhack
+	- Adding experimental XS implementation by the awesome Jens Rehsack
 
 0.33 Tue 27 May 2008
 	- Upgrading to Module::Install 0.74

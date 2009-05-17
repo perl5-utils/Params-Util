@@ -26,7 +26,7 @@ SCOPE: {
 	my $object = Foo->new;
 	ok( Scalar::Util::blessed($object), 'Foo' );
 	my $instance = Params::Util::_INSTANCE($object, 'Foo');
-	is( $instance, undef, '_INSTANCE correctly returns false' );
+	is( $instance, undef, '_INSTANCE correctly returns undef' );
 }
 
 
