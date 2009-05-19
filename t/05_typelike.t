@@ -7,10 +7,16 @@ BEGIN {
 	$ENV{PERL_PARAMS_UTIL_PP} ||= 0;
 }
 
-use Test::More tests => 29;
+use Test::More tests => 44;
+use Scalar::Util 'refaddr';
 use File::Spec::Functions ':ALL';
-BEGIN {
-	use_ok('Params::Util', qw(_ARRAYLIKE _HASHLIKE));
+use Params::Util qw{_ARRAYLIKE _HASHLIKE};
+
+# Tests that two objects are the same object
+sub addr {
+  my $have = shift;
+  my $want = shift;
+  is( refaddr($have), refaddr($want), 'Objects are the same object' );
 }
 
 my $listS = bless \do { my $i } => 'Foo::Listy';
@@ -48,12 +54,17 @@ for my $t (@data) {
     $t->[1],
     "$t->[3] " . ($t->[1] ? 'is' : "isn't") . ' @ish'
   );
-
+  if ( _ARRAYLIKE($t->[0]) ) {
+    addr( _ARRAYLIKE($t->[0]), $t->[0] );
+  }
   is(
     _HASHLIKE( $t->[0]) ? 1 : 0,
     $t->[2],
     "$t->[3] " . ($t->[2] ? 'is' : "isn't") . ' %ish'
   );
+  if ( _HASHLIKE($t->[0]) ) {
+    addr( _HASHLIKE($t->[0]), $t->[0] );
+  }
 }
 
 package Foo;
