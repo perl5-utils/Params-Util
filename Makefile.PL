@@ -18,7 +18,7 @@ unless ( defined $make_xs ) {
 # Generate the non-XS tests if we are making the XS version
 my @tests = qw{
 	t/01_compile.t
-	t/02_util.t
+	t/02_main.t
 	t/03_all.t
 	t/04_codelike.t
 	t/05_typelike.t
@@ -74,7 +74,7 @@ WriteMakefile(
 		FILES => join( ' ', @clean ),
 	},
 	PREREQ_PM     => {
-		'Scalar::Util' => '1.18',
+		'Scalar::Util' => '1.21',
 		'Test::More'   => '0.42',
 		'File::Spec'   => '0.80',
 	},
