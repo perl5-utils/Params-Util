@@ -63,7 +63,7 @@ is_like( SV *sv, const char *like )
 
             SP -= count;
             ax = (SP - PL_stack_base) + 1;
-            if( SVt_NULL != SvTYPE(ST(0)) )
+            if( SvTRUE(ST(0)) )
                 ++likely;
         }
 
