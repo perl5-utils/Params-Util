@@ -349,7 +349,7 @@ CODE:
                 SPAGAIN;
                 SP -= count;
                 ax = (SP - PL_stack_base) + 1;
-                isa_type = SvIV(ST(0));
+                isa_type = SvTRUE(ST(0));
                 ax = oldax;
             }
 
