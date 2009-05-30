@@ -1,6 +1,7 @@
 Revision history for Perl extension Params-Util
 
 0.39 Tue 24 Feb 2009
+	- Fixed XS implementation of _*LIKE and _INSTANCE
 	- Added test for a negative custom isa returning ('')
 	- Improving the 'clean' file list in a Makefile.PL
 
