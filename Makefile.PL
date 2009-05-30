@@ -38,7 +38,7 @@ if ( $make_xs ) {
 
 		# Convert it to a pure perl version
 		$file   =~ s/0/1/;
-		$buffer =~ s/0/1/;
+		$buffer =~ s/0;/1;/;
 
 		# Write the pure perl version
 		open( FILE, ">$file" ) or die("Failed to open '$file'");

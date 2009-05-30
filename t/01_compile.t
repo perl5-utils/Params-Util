@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use 5.00503
+use 5.00503;
 use strict;
 BEGIN {
 	$|  = 1;
