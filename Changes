@@ -1,6 +1,8 @@
 Revision history for Perl extension Params-Util
 
-0.39 Tue 24 Feb 2009
+1.00 Sun 31 May 2009
+	- Now all known XS bugs are worked out, I've removed
+	  the experimental flags and set that as the first 1+ release.
 	- Fixed XS implementation of _*LIKE and _INSTANCE
 	- Added test for a negative custom isa returning ('')
 	- Improving the 'clean' file list in a Makefile.PL

@@ -55,7 +55,7 @@ additions to C<Params::Util> may clash)
 
 =cut
 
-use 5.00503;
+use 5.006;
 use strict;
 require overload;
 require Exporter;
@@ -64,7 +64,7 @@ require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
-$VERSION   = '0.39';
+$VERSION   = '1.00';
 @ISA       = qw{
 	Exporter
 	DynaLoader
@@ -546,10 +546,11 @@ END_PERL
 
 =head2 _INVOCANT $value
 
-This routine tests whether the given value is a valid method invocant. This can
-be either an instance of an object, or a class name.
+This routine tests whether the given value is a valid method invocant.
+This can be either an instance of an object, or a class name.
 
-If so, the value itself is returned.  Otherwise, C<_INVOCANT> returns C<undef>.
+If so, the value itself is returned.  Otherwise, C<_INVOCANT>
+returns C<undef>.
 
 =cut
 
@@ -666,8 +667,6 @@ END_PERL
 
 =head2 _HANDLE
 
-B<EXPERIMENTAL: SUBJECT TO CHANGE OR POSSIBLE REMOVAL>
-
 The C<_HANDLE> function is intended to be imported into your package,
 and provides a convenient way to test whether or not a single scalar
 value is a file handle.
@@ -746,8 +745,6 @@ END_PERL
     my $class = _DRIVER(shift, 'My::Driver::Base') or die "Bad driver";
     ...
   }
-
-B<EXPERIMENTAL: SUBJECT TO CHANGE OR POSSIBLE REMOVAL>
 
 The C<_DRIVER> function is intended to be imported into your
 package, and provides a convenient way to load and validate

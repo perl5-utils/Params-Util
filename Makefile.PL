@@ -74,7 +74,7 @@ WriteMakefile(
 		FILES => join( ' ', @clean ),
 	},
 	PREREQ_PM     => {
-		'Scalar::Util' => '1.21',
+		'Scalar::Util' => '1.18',
 		'Test::More'   => '0.42',
 		'File::Spec'   => '0.80',
 	},
