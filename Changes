@@ -1,5 +1,8 @@
 Revision history for Perl extension Params-Util
 
+        - Fixed can_cc() bug in Makefile.PL where it was checking an existence
+          of PATH directory rather than executables. RT#55668 (DGOLDEN, MIYAGAWA)
+
 1.00 Sun 31 May 2009
 	- Now all known XS bugs are worked out, I've removed
 	  the experimental flags and set that as the first 1+ release.
