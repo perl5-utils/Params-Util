@@ -1,5 +1,14 @@
 Revision history for Perl extension Params-Util
 
+1.02_01 Thu 16 Sep 2010
+	- Trying for a much more advanced can_xs() alternative to can_cc()
+	  to deal with the situation where a host has a superficially
+	  working compiler, but completely screwed up headers.
+	- Adding some fallback strategies to deal with cases where these
+	  same machines don't support configure_requires.
+	- Adopt Chorny's eumm-upgrade style for the Makefile.PL.
+	- Allow the Makefile.PL to build it's own META.yml now.
+
 1.01 Thu 18 Mar 2010
         - Fixed can_cc() bug in Makefile.PL where it was checking an existence
           of PATH directory rather than executables. RT#55668 (DGOLDEN, MIYAGAWA)

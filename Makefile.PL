@@ -1,9 +1,7 @@
-# This is intended to be equivalent to the Module::Install version below
-
 use 5.00503;
 use strict;
 use Config;
-use ExtUtils::MakeMaker;
+use ExtUtils::MakeMaker ();
 
 # Should we build the XS version?
 my $make_xs = undef;
@@ -12,7 +10,7 @@ foreach ( @ARGV ) {
 	/^-xs/ and $make_xs = 1;
 }
 unless ( defined $make_xs ) {
-	$make_xs = can_cc();
+	$make_xs = can_xs();
 }
 
 # Generate the non-XS tests if we are making the XS version
@@ -57,11 +55,28 @@ if ( $make_xs ) {
 
 WriteMakefile(
 	# We created our own META.yml
-	NO_META       => 1,
-	NAME          => 'Params::Util',
-	ABSTRACT_FROM => 'lib/Params/Util.pm', 
-	VERSION_FROM  => 'lib/Params/Util.pm',
-	DEFINE	      => '-DPERL_EXT', 
+	# NO_META            => 1,
+	NAME               => 'Params::Util',
+	ABSTRACT           => 'Simple, compact and correct param-checking functions',
+	VERSION_FROM       => 'lib/Params/Util.pm',
+	AUTHOR             => 'Adam Kennedy <adamk@cpan.org>',
+	LICENSE            => 'perl',
+	DEFINE             => '-DPERL_EXT',
+	MIN_PERL_VERSION   => '5.00503',
+	CONFIGURE_REQUIRES => {
+		'ExtUtils::MakeMaker' => '6.52',
+		'ExtUtils::CBuilder'  => '0.27',
+	},
+	PREREQ_PM => {
+		'Scalar::Util' => '1.18',
+	},
+	BUILD_REQUIRES => {
+		'ExtUtils::MakeMaker' => '6.52',
+		'Test::More'          => '0.42',
+		'File::Spec'          => '0.80',
+	},
+
+	# Special stuff
 	CONFIGURE     => sub {
 		my $hash = $_[1];
 		unless ( $make_xs ) {
@@ -70,22 +85,9 @@ WriteMakefile(
 		}
 		return $hash;
 	},
-	clean         => {
+	clean => {
 		FILES => join( ' ', @clean ),
 	},
-	PREREQ_PM     => {
-		'Scalar::Util' => '1.18',
-		'Test::More'   => '0.42',
-		'File::Spec'   => '0.80',
-	},
-
-	# Non-backcompatible keys
-	($] >= 5.005 ? (
-		AUTHOR  => 'Adam Kennedy <adamk@cpan.org>',
-	) : ()),
-	($ExtUtils::MakeMaker::VERSION ge '6.30_00' ? (
-		LICENSE => 'perl',
-	) : ()),
 );
 
 
@@ -94,6 +96,80 @@ WriteMakefile(
 
 #####################################################################
 # Support Functions (adapted from Module::Install)
+
+# Modified from eumm-upgrade by Alexandr Ciornii.
+sub WriteMakefile {
+    my %params=@_;
+    my $eumm_version=$ExtUtils::MakeMaker::VERSION;
+    $eumm_version=eval $eumm_version;
+    die "EXTRA_META is deprecated" if exists $params{EXTRA_META};
+    die "License not specified" unless exists $params{LICENSE};
+    if ( $params{BUILD_REQUIRES} and $eumm_version < 6.5503 ) {
+        #EUMM 6.5502 has problems with BUILD_REQUIRES
+        $params{PREREQ_PM}={ %{$params{PREREQ_PM} || {}} , %{$params{BUILD_REQUIRES}} };
+        delete $params{BUILD_REQUIRES};
+    }
+    delete $params{CONFIGURE_REQUIRES} if $eumm_version < 6.52;
+    delete $params{MIN_PERL_VERSION}   if $eumm_version < 6.48;
+    delete $params{META_MERGE}         if $eumm_version < 6.46;
+    delete $params{META_ADD}           if $eumm_version < 6.46;
+    delete $params{LICENSE}            if $eumm_version < 6.31;
+    delete $params{AUTHOR}             if $] < 5.005;
+    delete $params{ABSTRACT_FROM}      if $] < 5.005;
+    delete $params{BINARY_LOCATION}    if $] < 5.005;
+
+    ExtUtils::MakeMaker::WriteMakefile(%params);
+}
+
+# Secondary compile testing via ExtUtils::CBuilder
+sub can_xs {
+	# Do we have the configure_requires checker?
+	local $@;
+	eval "require ExtUtils::CBuilder;";
+	if ( $@ ) {
+		# They don't obey configure_requires, so it is
+		# someone old and delicate. Try to avoid hurting
+		# them by falling back to an older simpler test.
+		return can_cc();
+	}
+
+	# Do a simple compile that consumes the headers we need
+	my $object = undef;
+	my @libs   = ();
+	eval {
+		my $builder = ExtUtils::CBuilder->new( quiet => 1 );
+		unless ( $builder->have_compiler ) {
+			# Simple lack of a compiler at all
+			return 0;
+		}
+		$object = $builder->compile(
+			source => 'sanexs.c',
+		);
+		@libs = $builder->link(
+			objects     => $object,
+			module_name => 'sanexs',
+		);
+	};
+	my $broken = !! $@;
+	foreach ( $object, @libs ) {
+		next unless defined $_;
+		1 while unlink $_;
+	}
+
+	if ( $broken ) {
+		# Compiler is officially screwed, you don't deserve
+		# to do any of our downstream depedencies as you'll
+		# probably end up choking on them as well.
+		# Trigger an NA for their own protection.
+		print "Unresolvable broken external dependency.\n";
+		print "This package requires a C compiler with full perl headers.\n";
+		print "Trivial test code using them failed to compile.\n";
+		print STDERR "NA: Unable to build distribution on this platform.\n";
+		exit(0);
+	}
+
+	return 1;
+}
 
 sub can_cc {
 	my @chunks = split(/ /, $Config::Config{cc}) or return;
