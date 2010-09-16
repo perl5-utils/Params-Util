@@ -157,6 +157,7 @@ sub can_xs {
 	}
 
 	if ( $broken ) {
+		### NOTE: Don't do this in a production release.
 		# Compiler is officially screwed, you don't deserve
 		# to do any of our downstream depedencies as you'll
 		# probably end up choking on them as well.
