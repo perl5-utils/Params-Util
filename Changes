@@ -1,5 +1,8 @@
 Revision history for Perl extension Params-Util
 
+1.04 Wed 20 Apr 2011
+	- Fixed #67522 have_compiler returns
+
 1.03 Mon 22 Nov 2010
 	- No CPAN Testers failures, moving to production release
 
