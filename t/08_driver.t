@@ -7,7 +7,7 @@ BEGIN {
 	$ENV{PERL_PARAMS_UTIL_PP} ||= 0;
 }
 
-use Test::More tests => 86;
+use Test::More tests => 91;
 use File::Spec::Functions ':ALL';
 BEGIN {
 	ok( ! defined &_CLASSISA, '_CLASSISA does not exist' );
@@ -113,3 +113,15 @@ is( _SUBCLASS('C', 'A'), undef, 'C: Non-existant driver is undef' );
 is( _SUBCLASS('D', 'A'), 'D',   'D: Broken driver is undef' );
 is( _SUBCLASS('E', 'A'), undef, 'E: Not a driver returns undef' );
 is( _SUBCLASS('F', 'A'), 'F',   'F: Faked isa returns ok' );
+
+SKIP: {
+	use_ok('Params::Util', qw(_CLASSDOES));
+
+	skip "DOES tests do not make sense on perls before 5.10", 4
+	  unless $] >= 5.010;
+
+  is( _CLASSDOES('A', 'A'), 'A', 'A: DOES A' );
+  is( _CLASSDOES('My_B', 'A'), 'My_B', 'My_B: DOES A' );
+  is( _CLASSDOES('E', 'A'), undef, 'E: DOES not A' );
+  is( _CLASSDOES('F', 'A'), 'F',   'F: DOES A' );
+}

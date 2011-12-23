@@ -71,13 +71,13 @@ $VERSION   = '1.04';
 };
 @EXPORT_OK = qw{
 	_STRING     _IDENTIFIER
-	_CLASS      _CLASSISA   _SUBCLASS  _DRIVER
+	_CLASS      _CLASSISA   _SUBCLASS  _DRIVER  _CLASSDOES
 	_NUMBER     _POSINT     _NONNEGINT
 	_SCALAR     _SCALAR0
 	_ARRAY      _ARRAY0     _ARRAYLIKE
 	_HASH       _HASH0      _HASHLIKE
 	_CODE       _CODELIKE
-	_INVOCANT   _REGEX      _INSTANCE
+	_INVOCANT   _REGEX      _INSTANCE  _INSTANCEDOES
 	_SET        _SET0
 	_HANDLE
 };
@@ -192,6 +192,21 @@ C<undef> if not.
 eval <<'END_PERL' unless defined &_CLASSISA;
 sub _CLASSISA ($$) {
 	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0]->isa($_[1])) ? $_[0] : undef;
+}
+END_PERL
+
+=head2 _CLASSDOES $string, $role
+
+This routine behaves exactly like C<L</_CLASSISA>>, but checks with C<< ->DOES
+>> rather than C<< ->isa >>.  This is probably only a good idea to use on Perl
+5.10 or later, when L<UNIVERSAL::DOES|UNIVERSAL::DOES/DOES> has been
+implemented.
+
+=cut
+
+eval <<'END_PERL' unless defined &_CLASSDOES;
+sub _CLASSDOES ($$) {
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0]->DOES($_[1])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -582,6 +597,21 @@ provided is not an object of that type.
 eval <<'END_PERL' unless defined &_INSTANCE;
 sub _INSTANCE ($$) {
 	(Scalar::Util::blessed($_[0]) and $_[0]->isa($_[1])) ? $_[0] : undef;
+}
+END_PERL
+
+=head2 _INSTANCEDOES $object, $role
+
+This routine behaves exactly like C<L</_INSTANCE>>, but checks with C<< ->DOES
+>> rather than C<< ->isa >>.  This is probably only a good idea to use on Perl
+5.10 or later, when L<UNIVERSAL::DOES|UNIVERSAL::DOES/DOES> has been
+implemented.
+
+=cut
+
+eval <<'END_PERL' unless defined &_INSTANCEDOES;
+sub _INSTANCEDOES ($$) {
+	(Scalar::Util::blessed($_[0]) and $_[0]->DOES($_[1])) ? $_[0] : undef;
 }
 END_PERL
 

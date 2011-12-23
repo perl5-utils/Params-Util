@@ -7,7 +7,7 @@ BEGIN {
 	$ENV{PERL_PARAMS_UTIL_PP} ||= 0;
 }
 
-use Test::More tests => 612;
+use Test::More tests => 632;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -744,7 +744,19 @@ foreach my $object ( @objects ) {
 }
 
 
+SKIP: {
+  use_ok( 'Params::Util', '_INSTANCEDOES' );
 
+	skip "DOES tests do not make sense on perls before 5.10", 19
+	  unless $] >= 5.010;
+
+  null( _INSTANCEDOES(bless({},'Bad'), 'Foo'), '_INSTANCEDOES(bad object) returns undef' );
+
+  foreach my $object ( @objects ) {
+    ok( _INSTANCEDOES($object, 'Foo'), '_INSTANCEDOES(object, class) returns true when expected' );
+    is( refaddr(_INSTANCEDOES($object, 'Foo')), refaddr($object), '_INSTANCEDOES(object, class) returns the same object' );
+  }
+}
 
 
 #####################################################################
