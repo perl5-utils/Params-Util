@@ -1,5 +1,9 @@
 Revision history for Perl extension Params-Util
 
+1.06 Thu 1 Mar 2012
+	- Remove the need for the sanexs.c file by generating into a temp
+	  file instead.
+
 1.05 Thu 1 Mar 2012
 	- Restore compatibility with pre-5.8.8 Perls without a working
 	  compiler available install time (RIBASUSHI)

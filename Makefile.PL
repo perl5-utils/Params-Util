@@ -145,9 +145,34 @@ sub can_xs {
 		# Lack of a compiler at all
 		return 0;
 	}
+
+
+	# Write a C file representative of what XS becomes
+	require File::Temp;
+	my ( $FH, $tmpfile ) = File::Temp::tempfile(
+		"sanexs-XXXXX",
+		SUFFIX => '.c',
+	);
+	binmode $FH;
+	print $FH <<'END_C';
+#include "EXTERN.h"
+#include "perl.h"
+#include "XSUB.h"
+
+int main(int argc, char **argv) {
+    return 0;
+}
+
+int boot_sanexs() {
+    return 1;
+}
+
+END_C
+	close $FH;
+
 	eval {
 		$object = $builder->compile(
-			source => 'sanexs.c',
+			source => $tmpfile,
 		);
 		@libs = $builder->link(
 			objects     => $object,
@@ -155,7 +180,7 @@ sub can_xs {
 		);
 	};
 	my $broken = !! $@;
-	foreach ( $object, @libs ) {
+	foreach ( $tmpfile, $object, @libs ) {
 		next unless defined $_;
 		1 while unlink $_;
 	}
