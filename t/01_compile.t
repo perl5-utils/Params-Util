@@ -16,5 +16,5 @@ use_ok('Params::Util');
 
 # Double check that Scalar::Util is valid
 require_ok( 'Scalar::Util' );
-ok( $Scalar::Util::VERSION >= 1.18, 'Scalar::Util version is at least 1.18' );
+ok( $Scalar::Util::VERSION >= 1.10, 'Scalar::Util version is at least 1.18' );
 ok( defined &Scalar::Util::refaddr, 'Scalar::Util has a refaddr implementation' );
