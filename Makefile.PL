@@ -70,7 +70,7 @@ WriteMakefile(
 		'ExtUtils::CBuilder'  => '0.27',
 	},
 	PREREQ_PM => {
-		'Scalar::Util' => '1.18',
+		'Scalar::Util' => $make_xs ? '1.18' : '1.10',
 	},
 	BUILD_REQUIRES => {
 		'ExtUtils::MakeMaker' => '6.52',

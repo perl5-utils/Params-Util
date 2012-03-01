@@ -1,5 +1,9 @@
 Revision history for Perl extension Params-Util
 
+1.05 Thu 1 Mar 2012
+	- Restore compatibility with pre-5.8.8 Perls without a working
+	  compiler available install time (RIBASUSHI)
+
 1.04 Wed 20 Apr 2011
 	- Fixed #67522 have_compiler returns
 

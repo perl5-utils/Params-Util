@@ -64,7 +64,7 @@ require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
-$VERSION   = '1.04';
+$VERSION   = '1.05';
 @ISA       = qw{
 	Exporter
 	DynaLoader
@@ -88,6 +88,30 @@ eval {
 	bootstrap Params::Util $VERSION;
 	1;
 } unless $ENV{PERL_PARAMS_UTIL_PP};
+
+# Use a private pure-perl copy of looks_like_number if the version of
+# Scalar::Util is old (for whatever reason).
+my $SU = eval "$Scalar::Util::VERSION" || 0;
+if ( $SU >= 1.18 ) { 
+	Scalar::Util->import('looks_like_number');
+} else {
+	eval <<'END_PERL';
+sub looks_like_number {
+	local $_ = shift;
+
+	# checks from perlfaq4
+	return 0 if !defined($_);
+	if (ref($_)) {
+		return overload::Overloaded($_) ? defined(0 + $_) : 0;
+	}
+	return 1 if (/^[+-]?[0-9]+$/); # is a +/- integer
+	return 1 if (/^([+-]?)(?=[0-9]|\.[0-9])[0-9]*(\.[0-9]*)?([Ee]([+-]?[0-9]+))?$/); # a C float
+	return 1 if ($] >= 5.008 and /^(Inf(inity)?|NaN)$/i) or ($] >= 5.006001 and /^Inf$/i);
+
+	0;
+}
+END_PERL
+}
 
 
 
@@ -254,7 +278,7 @@ number.
 
 eval <<'END_PERL' unless defined &_NUMBER;
 sub _NUMBER ($) {
-	( defined $_[0] and ! ref $_[0] and Scalar::Util::looks_like_number($_[0]) )
+	( defined $_[0] and ! ref $_[0] and looks_like_number($_[0]) )
 	? $_[0]
 	: undef;
 }
