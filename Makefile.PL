@@ -14,6 +14,11 @@ foreach ( @ARGV ) {
 unless ( defined $make_xs ) {
 	$make_xs = can_xs();
 }
+if ( $^O eq 'cygwin' and $make_xs == 1 and not /^-xs/ ) {
+	# Cygwin goes bonkers breaking `` if using Params::Util XS version
+	# for no apparent reason.
+	$make_xs = 0;
+}
 
 # Generate the non-XS tests if we are making the XS version
 my @tests = qw{

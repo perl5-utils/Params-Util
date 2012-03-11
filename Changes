@@ -1,5 +1,9 @@
 Revision history for Perl extension Params-Util
 
+1.07 Sun 11 Mar 2012
+	- Disable XS version on cygwin as it shows bizarre behaviour
+	  that breaks form when using Params::Util XS verwion.
+
 1.06 Thu 1 Mar 2012
 	- Remove the need for the sanexs.c file by generating into a temp
 	  file instead.
