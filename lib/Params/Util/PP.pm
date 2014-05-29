@@ -53,7 +53,8 @@ sub _IDENTIFIER ($)
 
 sub _CLASS ($)
 {
-    return (defined $_[0] and not ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s) ? $_[0] : undef;
+    my $arg = $_[0];
+    return (defined $arg and not ref $arg and $arg =~ m/^[^\W\d]\w*(?:::\w+)*\z/s) ? $arg : undef;
 }
 
 sub _CLASSISA ($$)
