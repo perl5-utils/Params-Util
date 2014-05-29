@@ -82,7 +82,8 @@ sub _NUMBER ($)
 
 sub _POSINT ($)
 {
-    return (defined $_[0] and not ref $_[0] and $_[0] =~ m/^[1-9]\d*$/) ? $_[0] : undef;
+    my $arg = $_[0];
+    return (defined $arg and not ref $arg and $arg =~ m/^[1-9]\d*$/) ? $arg : undef;
 }
 
 sub _NONNEGINT ($)
