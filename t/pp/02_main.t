@@ -9,7 +9,7 @@ BEGIN
     $ENV{PERL_PARAMS_UTIL_PP} ||= 1;
 }
 
-use Test::More tests => 632;
+use Test::More tests => 634;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -233,6 +233,12 @@ foreach my $id (qw{1 2 10 123456789})
     is(Params::Util::_POSINT($id), $id, "...::_POSINT('$id') returns ok");
 }
 
+{
+    my $pos_int = 2;
+    $pos_int =~ /(\d+)/;
+    is(Params::Util::_POSINT($1), $1, "...::_POSINT('$1') returns ok");
+}
+
 # Import the function
 use_ok('Params::Util', '_POSINT');
 ok(defined *_POSINT{CODE}, '_POSINT imported ok');
@@ -257,6 +263,12 @@ null(_POSINT("02"),         '_POSINT(zero lead) returns undef');
 foreach my $id (qw{1 2 10 123456789})
 {
     is(_POSINT($id), $id, "_POSINT('$id') returns ok");
+}
+
+{
+    my $pos_int = 2;
+    $pos_int =~ /(\d+)/;
+    is(_POSINT($1), $1, "...::_POSINT('$1') returns ok");
 }
 
 #####################################################################
