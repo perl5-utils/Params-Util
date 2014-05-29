@@ -9,7 +9,7 @@ BEGIN
     $ENV{PERL_PARAMS_UTIL_PP} ||= 1;
 }
 
-use Test::More tests => 634;
+use Test::More tests => 648.;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -138,6 +138,8 @@ null(Params::Util::_CLASS("1::X"),       '...::_CLASS(bad class) returns undef')
 foreach my $ident (qw{foo _foo foo1 __foo_1 Foo::Bar _Foo::Baaar::Baz X::1})
 {
     is(Params::Util::_CLASS($ident), $ident, "...::_CLASS('$ident') returns ok");
+    $ident =~ /(.*)/;
+    is(Params::Util::_CLASS($1), $1, "...::_CLASS('$1') returns ok");
 }
 
 # Import the function
@@ -163,6 +165,8 @@ null(_CLASS("1::X"),       '_CLASS(bad class) returns undef');
 foreach my $ident (qw{foo _foo foo1 __foo_1 Foo::Bar _Foo::Baaar::Baz X::1})
 {
     is(_CLASS($ident), $ident, "_CLASS('$ident') returns ok");
+    $ident =~ /(.*)/;
+    is(_CLASS($1), $1, "...::_CLASS('$1') returns ok");
 }
 
 #####################################################################
