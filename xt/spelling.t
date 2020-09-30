@@ -9,6 +9,9 @@ all_pod_files_spelling_ok();
 __END__
 dist
 importable
+Jens
 param
 params
+PurePerl
+Rehsack
 Util
