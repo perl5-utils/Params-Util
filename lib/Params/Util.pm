@@ -64,38 +64,41 @@ require DynaLoader;
 
 use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
-$VERSION   = '1.07';
-@ISA       = qw{
-	Exporter
-	DynaLoader
+$VERSION = '1.07';
+@ISA     = qw{
+  Exporter
+  DynaLoader
 };
 @EXPORT_OK = qw{
-	_STRING     _IDENTIFIER
-	_CLASS      _CLASSISA   _SUBCLASS  _DRIVER  _CLASSDOES
-	_NUMBER     _POSINT     _NONNEGINT
-	_SCALAR     _SCALAR0
-	_ARRAY      _ARRAY0     _ARRAYLIKE
-	_HASH       _HASH0      _HASHLIKE
-	_CODE       _CODELIKE
-	_INVOCANT   _REGEX      _INSTANCE  _INSTANCEDOES
-	_SET        _SET0
-	_HANDLE
+  _STRING     _IDENTIFIER
+  _CLASS      _CLASSISA   _SUBCLASS  _DRIVER  _CLASSDOES
+  _NUMBER     _POSINT     _NONNEGINT
+  _SCALAR     _SCALAR0
+  _ARRAY      _ARRAY0     _ARRAYLIKE
+  _HASH       _HASH0      _HASHLIKE
+  _CODE       _CODELIKE
+  _INVOCANT   _REGEX      _INSTANCE  _INSTANCEDOES
+  _SET        _SET0
+  _HANDLE
 };
-%EXPORT_TAGS = ( ALL => \@EXPORT_OK );
+%EXPORT_TAGS = (ALL => \@EXPORT_OK);
 
 eval {
-	local $ENV{PERL_DL_NONLAZY} = 0 if $ENV{PERL_DL_NONLAZY};
-	bootstrap Params::Util $VERSION;
-	1;
+    local $ENV{PERL_DL_NONLAZY} = 0 if $ENV{PERL_DL_NONLAZY};
+    bootstrap Params::Util $VERSION;
+    1;
 } unless $ENV{PERL_PARAMS_UTIL_PP};
 
 # Use a private pure-perl copy of looks_like_number if the version of
 # Scalar::Util is old (for whatever reason).
 my $SU = eval "$Scalar::Util::VERSION" || 0;
-if ( $SU >= 1.18 ) { 
-	Scalar::Util->import('looks_like_number');
-} else {
-	eval <<'END_PERL';
+if ($SU >= 1.18)
+{
+    Scalar::Util->import('looks_like_number');
+}
+else
+{
+    eval <<'END_PERL';
 sub looks_like_number {
 	local $_ = shift;
 
@@ -112,10 +115,6 @@ sub looks_like_number {
 }
 END_PERL
 }
-
-
-
-
 
 #####################################################################
 # Param Checking Functions
@@ -140,7 +139,7 @@ C<'0'> false negative case, but will return it.
 Please also note that this function expects a normal string. It does
 not support overloading or other magic techniques to get a string.
 
-Returns the string as a conveince if it is a valid string, or
+Returns the string as a convenience if it is a valid string, or
 C<undef> if not.
 
 =cut
@@ -179,7 +178,7 @@ package, and provides a convenient way to test to see if a value is
 a string that is a valid Perl class.
 
 This function only checks that the format is valid, not that the
-class is actually loaded. It also assumes "normalised" form, and does
+class is actually loaded. It also assumes "normalized" form, and does
 not accept class names such as C<::Foo> or C<D'Oh>.
 
 Returns the string as a convenience if it is a valid class name, or
@@ -205,7 +204,7 @@ This function checks that the format is valid and calls the -E<gt>isa
 method on the class name. It does not check that the class is actually
 loaded.
 
-It also assumes "normalised" form, and does
+It also assumes "normalized" form, and does
 not accept class names such as C<::Foo> or C<D'Oh>.
 
 Returns the string as a convenience if it is a valid class name, or
@@ -246,7 +245,7 @@ This function checks that the format is valid and calls the -E<gt>isa
 method on the class name. It does not check that the class is actually
 loaded.
 
-It also assumes "normalised" form, and does
+It also assumes "normalized" form, and does
 not accept class names such as C<::Foo> or C<D'Oh>.
 
 Returns the string as a convenience if it is a valid class name, or
@@ -271,7 +270,7 @@ a number. That is, it is defined and perl thinks it's a number.
 This function is basically a Params::Util-style wrapper around the
 L<Scalar::Util> C<looks_like_number> function.
 
-Returns the value as a convience, or C<undef> if the value is not a
+Returns the value as a convenience, or C<undef> if the value is not a
 number.
 
 =cut
@@ -292,7 +291,7 @@ The C<_POSINT> function is intended to be imported into your
 package, and provides a convenient way to test to see if a value is
 a positive integer (of any length).
 
-Returns the value as a convience, or C<undef> if the value is not a
+Returns the value as a convenience, or C<undef> if the value is not a
 positive integer.
 
 The name itself is derived from the XML schema constraint of the same
@@ -315,11 +314,11 @@ package, and provides a convenient way to test to see if a value is
 a non-negative integer (of any length). That is, a positive integer,
 or zero.
 
-Returns the value as a convience, or C<undef> if the value is not a
+Returns the value as a convenience, or C<undef> if the value is not a
 non-negative integer.
 
 As with other tests that may return false values, care should be taken
-to test via "defined" in boolean validy contexts.
+to test via "defined" in boolean validly contexts.
 
   unless ( defined _NONNEGINT($value) ) {
      die "Invalid value";
@@ -566,7 +565,7 @@ for greater symmetry with the other _XXXXLIKE functions.
 The use of _CALLABLE has been deprecated. It will continue to work, but
 with a warning, until end-2006, then will be removed.
 
-I apologise for any inconvenience caused.
+I apologize for any inconvenience caused.
 
 =cut
 
@@ -730,7 +729,7 @@ bit fuzzy, so this function is likely to be somewhat imperfect (at first
 anyway).
 
 That said, it is implement as well or better than the other file handle
-detectors in existance (and we stole from the best of them).
+detectors in existence (and we stole from the best of them).
 
 =cut
 
