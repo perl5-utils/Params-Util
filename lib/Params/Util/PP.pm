@@ -3,7 +3,7 @@ package Params::Util::PP;
 use strict;
 use warnings;
 
-our $VERSION = '1.07';
+our $VERSION = '1.099_001';
 
 =pod
 

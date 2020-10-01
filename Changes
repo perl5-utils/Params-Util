@@ -1,5 +1,24 @@
 Revision history for Perl extension Params-Util
 
+1.099_001	2020-10-01
+	- refactor tooling to get reasonable author tests and
+	  code/distribution quality checks (fixes RT#109106 - thanks
+	  to Alexandr Ciornii (CHORNY) for reporting -- and fixes RT#81924:
+	  obsolete section in Makefile.PL? - thanks to Sam Ferencik and
+	  Paul Cochrane for reporing and contribution)
+	- seaparate PP code into dedicated module
+	- fix spelling errors (including RT#115910 - thanks to
+	  Salvatore Bonaccorso (CARNIL) for reporting -- and RT#86356 -
+	  thanks to D. Steinbrunner for reporing and sorry Paul for fixing
+	  it during adding new author tests)
+        - fix RT#87649 (_CLASS) and RT#81276 (_POSINT) plus similar fixes
+	  for _STRING, _IDENTIFIER, _NUMBER and _NONNEGINT - thanks to
+	  Bernhard Graf (GRAF) and victor@vsespb.ru for reporting and
+	  Paul Cochrane <paul@liekut.de> for submitting initial patches.
+	- fix RT#79995: Please mention _INSTANCEDOES in Changes (and _CLASSDOES)
+	- fix RT#79856: Build breaks in 1.07
+	- 
+
 1.07	2012-03-11
 	- Disable XS version on cygwin as it shows bizarre behaviour
 	  that breaks form when using Params::Util XS verwion.
@@ -11,6 +30,7 @@ Revision history for Perl extension Params-Util
 1.05	2012-03-01
 	- Restore compatibility with pre-5.8.8 Perls without a working
 	  compiler available install time (RIBASUSHI)
+	- Added _CLASSDOES and _INSTANCEDOES
 
 1.04	2011-04-20
 	- Fixed #67522 have_compiler returns
