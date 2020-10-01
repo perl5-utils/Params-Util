@@ -9,7 +9,7 @@ BEGIN
     $ENV{PERL_PARAMS_UTIL_PP} ||= 1;
 }
 
-use Test::More tests => 648.;
+use Test::More tests => 712;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -47,6 +47,8 @@ null(Params::Util::_STRING(\"foo"),       '...::_STRING(SCALAR) returns undef');
 foreach my $ident (qw{0 1 foo _foo foo1 __foo_1 Foo::Bar}, ' ', ' foo')
 {
     is(Params::Util::_STRING($ident), $ident, "...::_STRING('$ident') returns ok");
+    $ident =~ /(.*)/;
+    is(Params::Util::_STRING($1), $1, "...::_STRING('$1') returns ok");
 }
 
 # Import the function
@@ -67,6 +69,8 @@ null(_STRING(\"foo"),       '_STRING(SCALAR) returns undef');
 foreach my $ident (qw{0 1 foo _foo foo1 __foo_1 Foo::Bar}, ' ', ' foo')
 {
     is(_STRING($ident), $ident, "...::_STRING('$ident') returns ok");
+    $ident =~ /(.*)/;
+    is(_STRING($1), $1, "...::_STRING('$1') returns ok");
 }
 
 #####################################################################
@@ -90,6 +94,8 @@ null(Params::Util::_IDENTIFIER("foo\n"),      '...::_IDENTIFIER(BAD) returns und
 foreach my $ident (qw{foo _foo foo1 __foo_1})
 {
     is(Params::Util::_IDENTIFIER($ident), $ident, "...::_IDENTIFIER('$ident') returns ok");
+    $ident =~ /(.*)/;
+    is(Params::Util::_IDENTIFIER($1), $1, "...::_IDENTIFIER('$1') returns ok");
 }
 
 # Import the function
@@ -114,6 +120,8 @@ null(_IDENTIFIER("foo\n"),      '_IDENTIFIER(BAD) returns undef');
 foreach my $ident (qw{foo _foo foo1 __foo_1})
 {
     is(_IDENTIFIER($ident), $ident, "...::_IDENTIFIER('$ident') returns ok");
+    $ident =~ /(.*)/;
+    is(_IDENTIFIER($1), $1, "_IDENTIFIER('$1') returns ok");
 }
 
 #####################################################################
@@ -166,7 +174,7 @@ foreach my $ident (qw{foo _foo foo1 __foo_1 Foo::Bar _Foo::Baaar::Baz X::1})
 {
     is(_CLASS($ident), $ident, "_CLASS('$ident') returns ok");
     $ident =~ /(.*)/;
-    is(_CLASS($1), $1, "...::_CLASS('$1') returns ok");
+    is(_CLASS($1), $1, "_CLASS('$1') returns ok");
 }
 
 #####################################################################
@@ -188,6 +196,8 @@ null(Params::Util::_NUMBER("D'oh"),       '...::_NUMBER(bad class) returns undef
 foreach my $id (qw{1 2 10 123456789 -1 0 +1 02 .1 0.013e-3 1e1})
 {
     is(Params::Util::_NUMBER($id), $id, "...::_NUMBER('$id') returns ok");
+    $id =~ /(.*)/;
+    is(Params::Util::_NUMBER($1), $1, "...::_NUMBER('$1') returns ok");
 }
 
 # Import the function
@@ -210,6 +220,8 @@ null(_NUMBER("D'oh"),       '_NUMBER(bad class) returns undef');
 foreach my $id (qw{1 2 10 123456789 -1 0 +1 02 .1 0.013e-3 1e1})
 {
     is(_NUMBER($id), $id, "_NUMBER('$id') returns ok");
+    $id =~ /(.*)/;
+    is(_NUMBER($1), $1, "_NUMBER('$1') returns ok");
 }
 
 #####################################################################
@@ -235,11 +247,7 @@ null(Params::Util::_POSINT("02"),         '...::_POSINT(zero lead) returns undef
 foreach my $id (qw{1 2 10 123456789})
 {
     is(Params::Util::_POSINT($id), $id, "...::_POSINT('$id') returns ok");
-}
-
-{
-    my $pos_int = 2;
-    $pos_int =~ /(\d+)/;
+    $id =~ /(\d+)/;
     is(Params::Util::_POSINT($1), $1, "...::_POSINT('$1') returns ok");
 }
 
@@ -267,12 +275,8 @@ null(_POSINT("02"),         '_POSINT(zero lead) returns undef');
 foreach my $id (qw{1 2 10 123456789})
 {
     is(_POSINT($id), $id, "_POSINT('$id') returns ok");
-}
-
-{
-    my $pos_int = 2;
-    $pos_int =~ /(\d+)/;
-    is(_POSINT($1), $1, "...::_POSINT('$1') returns ok");
+    $id =~ /(\d+)/;
+    is(_POSINT($1), $1, "_POSINT('$1') returns ok");
 }
 
 #####################################################################
@@ -297,6 +301,8 @@ null(Params::Util::_NONNEGINT("02"),         '...::_NONNEGINT(zero lead) returns
 foreach my $id (qw{0 1 2 10 123456789})
 {
     is(Params::Util::_NONNEGINT($id), $id, "...::_NONNEGINT('$id') returns ok");
+    $id =~ /(\d+)/;
+    is(Params::Util::_NONNEGINT($1), $1, "...::_NONNEGINT('$1') returns ok");
 }
 
 # Import the function
@@ -322,6 +328,8 @@ null(_NONNEGINT("02"),         '_NONNEGINT(zero lead) returns undef');
 foreach my $id (qw{0 1 2 10 123456789})
 {
     is(_NONNEGINT($id), $id, "_NONNEGINT('$id') returns ok");
+    $id =~ /(\d+)/;
+    is(_NONNEGINT($1), $1, "_NONNEGINT('$1') returns ok");
 }
 
 #####################################################################

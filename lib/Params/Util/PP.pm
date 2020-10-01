@@ -43,12 +43,14 @@ sub _XScompiled { return 0; }
 
 sub _STRING ($)
 {
-    return (defined $_[0] and not ref $_[0] and length($_[0])) ? $_[0] : undef;
+    my $arg = $_[0];
+    return (defined $arg and not ref $arg and length($arg)) ? $arg : undef;
 }
 
 sub _IDENTIFIER ($)
 {
-    return (defined $_[0] and not ref $_[0] and $_[0] =~ m/^[^\W\d]\w*\z/s) ? $_[0] : undef;
+    my $arg = $_[0];
+    return (defined $arg and not ref $arg and $arg =~ m/^[^\W\d]\w*\z/s) ? $arg : undef;
 }
 
 sub _CLASS ($)
@@ -76,9 +78,8 @@ sub _SUBCLASS ($$)
 
 sub _NUMBER ($)
 {
-    return (defined $_[0] and not ref $_[0] and looks_like_number($_[0]))
-      ? $_[0]
-      : undef;
+    my $arg = $_[0];
+    return (defined $arg and not ref $arg and looks_like_number($arg)) ? $arg : undef;
 }
 
 sub _POSINT ($)
@@ -89,7 +90,8 @@ sub _POSINT ($)
 
 sub _NONNEGINT ($)
 {
-    return (defined $_[0] and not ref $_[0] and $_[0] =~ m/^(?:0|[1-9]\d*)$/) ? $_[0] : undef;
+    my $arg = $_[0];
+    return (defined $arg and not ref $arg and $arg =~ m/^(?:0|[1-9]\d*)$/) ? $arg : undef;
 }
 
 sub _SCALAR ($)
