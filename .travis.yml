@@ -20,11 +20,24 @@ perl:
   - "5.18"
   - "5.16"
   - "5.14"
-sudo: false
 matrix:
   include:
     - perl: "5.30"
       env: COVERAGE=1
+    - perl: "5.30"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
+    - perl: "5.28"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
+    - perl: "5.26"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
+    - perl: "5.26-shrplib"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
+    - perl: "5.24-shrplib"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
+    - perl: "5.18"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
+    - perl: "5.14"
+      env: PERL_MM_OPT="PUREPERL_ONLY=1"
 before_script:
   - coverage-setup
 after_success:
