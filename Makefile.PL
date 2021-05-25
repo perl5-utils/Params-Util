@@ -120,6 +120,7 @@ WriteMakefile1(
     TEST_REQUIRES      => \%TEST_DEPS,
     XS                 => {map { (my $tgt = $_) =~ s/\.xs$/\.c/; $_ => $tgt; } @XS_FILES},
     MAGICXS            => 1,
+    SKIP               => [ $loadable_xs ? () : qw(static dynamic) ],
     depend             => {'$(FIRST_MAKEFILE)' => '$(VERSION_FROM)'},
     test               => {TESTS               => join(' ', 't/pp/*.t', ($loadable_xs ? 't/xs/*.t' : ()), 'xt/*.t')},
     # Otherwise 'cxinc' isn't defined
