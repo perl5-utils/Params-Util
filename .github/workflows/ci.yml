@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Cache ~/perl5
-        uses: actions/cache@v2
+        uses: actions/cache@v5
         with:
           key: ${{ runner.os }}-dist-locallib
           path: ~/perl5
@@ -39,7 +39,7 @@ jobs:
           perl Makefile.PL
           make manifest dist DISTVNAME=dist
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v6
         with:
           name: dist
           path: ./dist.tar.gz
@@ -71,7 +71,7 @@ jobs:
 
     steps:
       - name: Get dist artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v7
         with:
           name: dist
 
