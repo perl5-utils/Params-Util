@@ -44,6 +44,7 @@ my $loadable_xs = Config::AutoConf::ParamsUtil->check_paramsutil_prerequisites()
 my %RUN_DEPS = (
     'Scalar::Util' => $loadable_xs ? '1.18' : '1.10',
     'XSLoader'     => "0.22",
+    'parent'       => 0,
 );
 my %BUNDLE_CONFIGURE_DEPS = (
     'inc::latest'      => '0.500',
