@@ -38,6 +38,7 @@ Params::Util::PP->can("looks_like_number") or *looks_like_number = sub {
 
 ## no critic (Subroutines::ProhibitSubroutinePrototypes, Subroutines::RequireArgUnpacking)
 ## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
+## no critic (Bangs::ProhibitNumberedNames)
 
 sub _XScompiled { return 0; }
 
