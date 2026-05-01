@@ -1,0 +1,120 @@
+name: params-util
+
+x-perl-build: &perl-build
+  context: .devcontainer
+
+x-perl-tester: &perl-tester
+  working_dir: /workspace
+  command:
+    - sh
+    - -ec
+    - |
+      cp -a /workspace/. /tmp/build/
+      cd /tmp/build
+      cpanm --notest --with-recommends --with-suggests Test::WriteVariants Config::AutoConf Carp inc::latest
+      perl Makefile.PL
+      make manifest dist DISTVNAME=dist
+      cpanm --notest --installdeps dist.tar.gz
+      cpanm --verbose --test-only dist.tar.gz
+
+services:
+  dev:
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.42"
+    image: params-util/perl-tester:5.42
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - cpanm-cache-dev:/home/perl/.cpanm
+      - locallib-dev:/opt/perl5
+    command: ["sleep", "infinity"]
+
+  perl-5.42:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.42"
+    image: params-util/perl-tester:5.42
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.42:/home/perl/.cpanm
+
+  perl-5.40:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.40"
+    image: params-util/perl-tester:5.40
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.40:/home/perl/.cpanm
+
+  perl-5.38:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.38"
+    image: params-util/perl-tester:5.38
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.38:/home/perl/.cpanm
+
+  perl-5.36:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.36"
+    image: params-util/perl-tester:5.36
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.36:/home/perl/.cpanm
+
+  perl-5.34:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.34"
+    image: params-util/perl-tester:5.34
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.34:/home/perl/.cpanm
+
+  perl-5.32:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.32"
+    image: params-util/perl-tester:5.32
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.32:/home/perl/.cpanm
+
+  perl-5.30:
+    <<: *perl-tester
+    build:
+      <<: *perl-build
+      args:
+        PERL_VERSION: "5.30"
+    image: params-util/perl-tester:5.30
+    volumes:
+      - .:/workspace:ro
+      - cpanm-cache-5.30:/home/perl/.cpanm
+
+volumes:
+  cpanm-cache-dev:
+  locallib-dev:
+  cpanm-cache-5.30:
+  cpanm-cache-5.32:
+  cpanm-cache-5.34:
+  cpanm-cache-5.36:
+  cpanm-cache-5.38:
+  cpanm-cache-5.40:
+  cpanm-cache-5.42:
