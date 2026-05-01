@@ -4,7 +4,7 @@ package D;
 
 use strict;
 
-use A ();
+use A    ();
 use vars qw{$VERSION @ISA};
 
 BEGIN

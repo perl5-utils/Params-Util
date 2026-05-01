@@ -5,7 +5,7 @@ package My_B;
 
 use strict;
 
-use A ();
+use A    ();
 use vars qw{$VERSION @ISA};
 
 BEGIN
