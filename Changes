@@ -1,10 +1,17 @@
 Revision history for Perl extension Params-Util
 
 1.103	unreleased
-	- fix #3: XS variants of _HASH/_HASH0/_ARRAY/_ARRAY0 now reject
-	  blessed references, matching the documented "raw and unblessed"
-	  contract and the pure-perl behaviour. Thanks to Matthew Horsfall
-	  (@wolfsage) for reporting.
+	- fix #3 / RT#75561: XS variants of _HASH/_HASH0/_ARRAY/_ARRAY0
+	  now reject blessed references, matching the documented "raw and
+	  unblessed" contract and the pure-perl behaviour. Thanks to
+	  Guillaume Aubert (AUBERTG) for the original RT report (2012),
+	  Paul Cochrane (PCOCHRANE) for tests and patches (2014), Ricardo
+	  Signes (rjbs) for confirming the PP code is the reference (2024),
+	  and Matthew Horsfall (@wolfsage) for the GitHub re-report.
+	- fix RT#141940: declare `parent` as a runtime prerequisite.
+	  lib/Params/Util.pm uses `use parent qw{Exporter XSLoader}` but
+	  parent was only listed in CONFIGURE_REQUIRES; on Perls older
+	  than 5.10.1 it is not core and must be pulled in at install time.
 	- fix duplicate `requires` key in the test prereqs hash in
 	  Makefile.PL that silently dropped Test::More and Storable from
 	  the META develop section.
