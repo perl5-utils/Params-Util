@@ -32,6 +32,9 @@ nytprof.out
 .*\.planner
 .*\.lock
 \.travis\.yml
+^\.github/
+^\.devcontainer/
+^docker-compose\.yml$
 ^Params-Util-.*
 \bxt
 \.[icos]

@@ -1,0 +1,8 @@
+{
+  "name": "Params-Util (perl 5.42)",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "perl"
+}
