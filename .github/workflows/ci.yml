@@ -30,7 +30,7 @@ jobs:
           path: ./dist.tar.gz
 
   test-linux:
-    name: 'Linux Perl ${{ matrix.perl }}${{ matrix.pureperl && '' (pureperl)'' || '' (default)'' }}${{ matrix.force_cc_fail && '' + force CC fail'' || '' }}'
+    name: Linux Perl ${{ matrix.perl }} (${{ format('{0}, {1}', fromJSON('["default","pureperl"]')[matrix.pureperl], fromJSON('["","force CC failure"]')[matrix.force_cc_fail]) }})
     needs: dist
     runs-on: ubuntu-latest
     strategy:
@@ -60,7 +60,7 @@ jobs:
             dist.tar.gz
 
   test-other-os:
-    name: 'Perl latest on ${{ matrix.os }}'
+    name: Perl latest on ${{ matrix.os }}
     needs: dist
     runs-on: ${{ matrix.os }}
     strategy:
