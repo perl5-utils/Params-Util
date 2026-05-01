@@ -7,61 +7,20 @@ on:
   pull_request:
 
 jobs:
-  perl-version:
-    name: Fetch available perl versions
-    runs-on: ubuntu-latest
-    steps:
-      - uses: shogo82148/actions-setup-perl@v1
-      - id: set-matrix
-        name: Generate matrix for perl versions
-        shell: perl {0}
-        run: |
-          use Actions::Core;
-          use JSON::PP;
-          use version;
-          my $perl_min_version = version->parse("v5.8");
-          my @versions = grep { version->parse("v$_") >= $perl_min_version }
-                         perl_versions(platform => 'linux');
-          my @include = map { +{ os => 'ubuntu-latest', perl => $_ } } @versions;
-          push @include, {
-            os            => 'ubuntu-latest',
-            perl          => '5',
-            pureperl      => JSON::PP::true,
-            force_cc_fail => JSON::PP::true,
-          };
-          set_output(matrix_include => \@include);
-    outputs:
-      matrix_include: ${{ steps.set-matrix.outputs.matrix_include }}
-
   dist:
     name: Make distribution
     runs-on: ubuntu-latest
+    container:
+      image: perldocker/perl-tester:5.42
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Cache ~/perl5
-        uses: actions/cache@v5
-        with:
-          key: ${{ runner.os }}-dist-locallib
-          path: ~/perl5
-      - name: Perl version
+      - name: Bootstrap author deps
         run: |
-          perl -v
-      - name: Install cpanm
-        run: |
-          curl -L https://cpanmin.us | perl - --sudo App::cpanminus
-      - name: Install local::lib
-        run: |
-          cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-      - name: Install author deps
-        shell: bash
-        run: |
-          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-          cpanm --notest --with-recommends --with-suggests Test::WriteVariants Config::AutoConf Carp inc::latest
+          cpanm --notest --with-recommends --with-suggests \
+            inc::latest Capture::Tiny Config::AutoConf Test::WriteVariants
       - name: Make distribution
-        shell: bash
         run: |
-          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
           perl Makefile.PL
           make manifest dist DISTVNAME=dist
       - name: Upload artifact
@@ -69,43 +28,60 @@ jobs:
         with:
           name: dist
           path: ./dist.tar.gz
-  test:
-    needs: [dist, perl-version]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        perl: ['5']
-        pureperl: [false, true]
-        include: ${{ fromJSON(needs.perl-version.outputs.matrix_include) }}
-    name: Perl ${{ matrix.perl }} on ${{ matrix.os }} (${{ format('{0}, {1}', fromJSON('["","pureperl"]')[matrix.pureperl], fromJSON('["","force cc failure"]')[matrix.force_cc_fail]) }})
 
+  test-linux:
+    name: 'Linux Perl ${{ matrix.perl }}${{ matrix.pureperl && '' (pureperl)'' || '' (default)'' }}${{ matrix.force_cc_fail && '' + force CC fail'' || '' }}'
+    needs: dist
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        perl: ['5.30', '5.32', '5.34', '5.36', '5.38', '5.40', '5.42']
+        pureperl: [false, true]
+        include:
+          - perl: '5.42'
+            pureperl: true
+            force_cc_fail: true
+    container:
+      image: perldocker/perl-tester:${{ matrix.perl }}
     steps:
       - name: Get dist artifact
         uses: actions/download-artifact@v7
         with:
           name: dist
-
-      - name: Set up perl
-        uses: shogo82148/actions-setup-perl@v1
-        if: matrix.os != 'windows-latest'
-        with:
-          perl-version: ${{ matrix.perl }}
-      - name: Set up perl (Strawberry)
-        uses: shogo82148/actions-setup-perl@v1
-        if: matrix.os == 'windows-latest'
-        with:
-          distribution: 'strawberry'
-
       - run: perl -V
-
       - name: Install Perl deps
-        run: |
-          cpanm --notest --installdeps dist.tar.gz
-
+        run: cpanm --notest --installdeps dist.tar.gz
       - name: Run tests
-        run:
-          cpanm --verbose --test-only
-              ${{ fromJSON('[ "", "--pureperl" ]')[ matrix.pureperl ] }}
-              ${{ fromJSON('[ "", "--build-args=\"CC=false\"" ]')[ matrix.force_cc_fail ] }}
-              dist.tar.gz
+        run: |
+          cpanm --verbose --test-only \
+            ${{ matrix.pureperl && '--pureperl' || '' }} \
+            ${{ matrix.force_cc_fail && '--build-args="CC=false"' || '' }} \
+            dist.tar.gz
+
+  test-other-os:
+    name: 'Perl latest on ${{ matrix.os }}'
+    needs: dist
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - name: Get dist artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: dist
+      - name: Set up perl
+        if: matrix.os != 'windows-latest'
+        uses: shogo82148/actions-setup-perl@v1
+      - name: Set up perl (Strawberry)
+        if: matrix.os == 'windows-latest'
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          distribution: strawberry
+      - run: perl -V
+      - name: Install Perl deps
+        run: cpanm --notest --installdeps dist.tar.gz
+      - name: Run tests
+        run: cpanm --verbose --test-only dist.tar.gz
