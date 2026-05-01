@@ -1,6 +1,6 @@
 Revision history for Perl extension Params-Util
 
-1.103	unreleased
+1.103_001	2026-05-01
 	- fix #3 / RT#75561: XS variants of _HASH/_HASH0/_ARRAY/_ARRAY0
 	  now reject blessed references, matching the documented "raw and
 	  unblessed" contract and the pure-perl behaviour. Thanks to
