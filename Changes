@@ -1,5 +1,24 @@
 Revision history for Perl extension Params-Util
 
+1.103	unreleased
+	- fix #3: XS variants of _HASH/_HASH0/_ARRAY/_ARRAY0 now reject
+	  blessed references, matching the documented "raw and unblessed"
+	  contract and the pure-perl behaviour. Thanks to Matthew Horsfall
+	  (@wolfsage) for reporting.
+	- fix duplicate `requires` key in the test prereqs hash in
+	  Makefile.PL that silently dropped Test::More and Storable from
+	  the META develop section.
+	- update ppport.h from Devel::PPPort 3.73
+	- replace Travis-CI configuration with GitHub Actions: Linux matrix
+	  (Perl 5.30..5.42) running in perldocker/perl-tester containers,
+	  plus host-runner jobs on macOS-latest and Windows-latest with
+	  Strawberry to verify XS builds under clang and MSVC.
+	- add Docker-based devcontainer setup (.devcontainer + docker-compose)
+	  for local multi-Perl testing without installing Perl on the host.
+	- author tests: suppress Bangs::ProhibitNumberedNames for the
+	  intentionally-named _SCALAR0/_ARRAY0/_HASH0/_SET0 predicates,
+	  fix minor perltidy formatting in Makefile.PL and t/driver/.
+
 1.102	2020-11-02
 	- fix RT#133623 - Can't install in pureperl mode. Thanks to Nigel
 	  Gregoire (@nfg) for reporting and proposal for proper fix.
