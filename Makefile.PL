@@ -104,8 +104,7 @@ WriteMakefile1(
                 recommends => {'Config::AutoConf' => '0.315'}
             },
             test => {
-                requires => {%TEST_DEPS},
-                requires => {'Test::LeakTrace' => 0}
+                requires => {%TEST_DEPS, 'Test::LeakTrace' => 0}
             },
             runtime => {requires => {%RUN_DEPS}},
         },
