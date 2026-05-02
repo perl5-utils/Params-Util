@@ -1,0 +1,115 @@
+=head1 ADR-005: DRY in XS via XSUB ALIAS
+
+=head2 Status
+
+Accepted
+
+=head2 Context
+
+Params::Util's XS layer historically implemented each function as a
+standalone XSUB, even when functions share nearly identical logic.
+For example, C<_INSTANCE> calls C<< ->isa >> while C<_INSTANCEDOES>
+calls C<< ->DOES >> and C<_INSTANCECAN> calls C<< ->can >> -- the
+surrounding code (magic handling, blessed check, stack manipulation,
+return convention) is identical.
+
+Duplicating 40+ lines of XS per variant violates DRY and makes
+maintenance error-prone.  The XSUB C<ALIAS> mechanism allows multiple
+Perl-visible function names to share one C entry point, distinguished
+only by the C<ix> variable.
+
+A concern raised during review of L<List::MoreUtils> and
+L<Scalar::List::Utils> is that ALIAS forces conditionals into a shared
+code path.  For functions that loop over lists (e.g. C<uniq>/C<uniqstr>/
+C<uniqint>), a branch per iteration can hurt performance.  However,
+Params::Util predicates perform a single check per call -- the
+dominant cost is always the Perl method dispatch (C<call_method>), and
+an array-index lookup for the method name is negligible in comparison.
+
+=head2 Decision
+
+Consolidate the XS implementation into ALIAS groups where the only
+difference is the method name passed to C<call_method> or the
+validation logic selected by C<ix>:
+
+=over 4
+
+=item Group 1: String validators
+
+C<_IDENTIFIER> and C<_CLASS> -- differ only in the pattern matched
+against the string (identifier vs. class name with optional C<::>
+separators).
+
+=item Group 2: Numeric validators
+
+C<_POSINT> and C<_NONNEGINT> -- differ only in whether zero is
+accepted.
+
+=item Group 3: Class dispatchers
+
+C<_CLASSISA>, C<_CLASSDOES>, C<_CLASSCAN>, C<_SUBCLASS> -- class name
+validation followed by C<call_method> with method name from a static
+table.  C<_SUBCLASS> adds one inequality check.
+
+=item Group 4: Instance dispatchers
+
+C<_INSTANCE>, C<_INSTANCEDOES>, C<_INSTANCECAN> -- C<sv_isobject>
+followed by C<call_method> with method name from a static table.
+
+=item Group 5: Invocant dispatchers
+
+C<_INVOCANT>, C<_INVOCANTCAN> -- blessed-or-class check, optionally
+followed by C<call_method("can")>.
+
+=back
+
+Functions deliberately excluded from XS acceleration:
+
+=over 4
+
+=item C<_SET> / C<_SET0>
+
+These loop over an array calling C<_INSTANCE> per element.  The
+per-element C<_INSTANCE> is already XS-accelerated; the loop overhead
+in Perl is minimal.  Callers needing high-performance list filtering
+should use L<List::Util/any> or L<List::MoreUtils/all> instead.
+
+=item C<_HANDLE>
+
+Too many special cases (globs, tied handles, multiple C<isa> checks).
+Rarely performance-critical.
+
+=item C<_DRIVER>
+
+Dominated by C<require> cost; XS around the dispatch adds no value.
+
+=back
+
+=head2 Consequences
+
+=over 4
+
+=item *
+
+Each ALIAS group is maintained as a single block of C; bug fixes and
+improvements apply to all aliased functions simultaneously.
+
+=item *
+
+Adding a new variant (e.g. a future C<_CLASSDOES_ALL>) requires only
+a new ALIAS line and a table entry, not duplicating the entire XSUB.
+
+=item *
+
+The existing C<_INSTANCE> XSUB is refactored into the Group 4 ALIAS
+block, which is a non-functional change -- existing tests cover the
+behaviour.
+
+=item *
+
+No measurable performance regression from ALIAS dispatch: one static
+array index per call vs. hundreds of cycles for C<call_method>.
+
+=back
+
+=cut
