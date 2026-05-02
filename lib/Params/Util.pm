@@ -62,7 +62,7 @@ use parent qw{Exporter XSLoader};
 
 use Params::Util::PP qw();
 
-our $VERSION = '1.103_001';
+our $VERSION = '1.105_001';
 
 local $ENV{PERL_DL_NONLAZY} = 0 if $ENV{PERL_DL_NONLAZY};
 XSLoader::load("Params::Util", $VERSION) unless $ENV{PERL_PARAMS_UTIL_PP};

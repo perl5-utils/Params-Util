@@ -134,8 +134,8 @@ WriteMakefile1(
     depend             => {'$(FIRST_MAKEFILE)' => '$(VERSION_FROM)'},
     test               => {TESTS               => join(' ', 't/pp/*.t', ($loadable_xs ? 't/xs/*.t' : ()), 'xt/*.t')},
     # Otherwise 'cxinc' isn't defined
-    ($] < 5.012   ? (DEFINE    => '-DPERL_EXT')                         : (),),
-    (-d 'Sandbox' ? (realclean => {FILES => join(' ', 't/pp', 't/xs')}) : ()),
+    ($] < 5.012   ? (DEFINE    => '-DPERL_EXT')                                                                          : (),),
+    (-d 'Sandbox' ? (realclean => {FILES => join(' ', 't/pp', 't/xs', 'inc/latest* inc/inc_*', 'config.log', 'M*.bak')}) : ()),
 );
 
 sub WriteMakefile1
