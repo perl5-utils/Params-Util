@@ -9,7 +9,7 @@ BEGIN
     $ENV{PERL_PARAMS_UTIL_PP} ||= 1;
 }
 
-use Test::More tests => 720;
+use Test::More tests => 770;
 use File::Spec::Functions ':ALL';
 use Scalar::Util 'refaddr';
 use Params::Util ();
@@ -724,6 +724,74 @@ SKIP:
         ok(_INSTANCEDOES($object, 'Foo'), '_INSTANCEDOES(object, class) returns true when expected');
         is(refaddr(_INSTANCEDOES($object, 'Foo')), refaddr($object), '_INSTANCEDOES(object, class) returns the same object');
     }
+}
+
+#####################################################################
+# Tests for _CLASSCAN
+
+use_ok('Params::Util', '_CLASSCAN');
+ok(defined *_CLASSCAN{CODE}, '_CLASSCAN imported ok');
+
+# Bad values
+null(_CLASSCAN(undef,  'foo'), '_CLASSCAN(undef, method) returns undef');
+null(_CLASSCAN('',     'foo'), '_CLASSCAN(empty, method) returns undef');
+null(_CLASSCAN({},     'foo'), '_CLASSCAN(HASH, method) returns undef');
+null(_CLASSCAN([],     'foo'), '_CLASSCAN(ARRAY, method) returns undef');
+null(_CLASSCAN('4bad', 'foo'), '_CLASSCAN(bad class, method) returns undef');
+
+# Class without the method
+null(_CLASSCAN('Bad', 'foo'), '_CLASSCAN(Bad, foo) returns undef');
+
+# Class with the method
+is(_CLASSCAN('Foo', 'foo'), 'Foo', '_CLASSCAN(Foo, foo) returns class name');
+is(_CLASSCAN('Bar', 'foo'), 'Bar', '_CLASSCAN(Bar, foo) returns class name (inherited)');
+
+#####################################################################
+# Tests for _INSTANCECAN
+
+use_ok('Params::Util', '_INSTANCECAN');
+ok(defined *_INSTANCECAN{CODE}, '_INSTANCECAN imported ok');
+
+# Bad values
+null(_INSTANCECAN(undef,            'foo'), '_INSTANCECAN(undef, method) returns undef');
+null(_INSTANCECAN('Foo',            'foo'), '_INSTANCECAN(class string, method) returns undef');
+null(_INSTANCECAN({},               'foo'), '_INSTANCECAN(unblessed HASH, method) returns undef');
+null(_INSTANCECAN(bless({}, 'Bad'), 'foo'), '_INSTANCECAN(bad object, foo) returns undef');
+
+# Baz fakes isa('Foo') but does not actually provide 'foo'
+null(_INSTANCECAN(bless({}, 'Baz'), 'foo'), '_INSTANCECAN(Baz object, foo) returns undef');
+
+# Good values - only objects whose class genuinely provides 'foo'
+foreach my $object (grep { $_->can('foo') } @objects)
+{
+    ok(_INSTANCECAN($object, 'foo'), '_INSTANCECAN(object, foo) returns true when expected');
+    is(refaddr(_INSTANCECAN($object, 'foo')), refaddr($object), '_INSTANCECAN(object, foo) returns the same object');
+}
+
+#####################################################################
+# Tests for _INVOCANTCAN
+
+use_ok('Params::Util', '_INVOCANTCAN');
+ok(defined *_INVOCANTCAN{CODE}, '_INVOCANTCAN imported ok');
+
+# Bad values
+null(_INVOCANTCAN(undef,            'foo'), '_INVOCANTCAN(undef, method) returns undef');
+null(_INVOCANTCAN('',               'foo'), '_INVOCANTCAN(empty, method) returns undef');
+null(_INVOCANTCAN({},               'foo'), '_INVOCANTCAN(unblessed HASH, method) returns undef');
+null(_INVOCANTCAN('Bad',            'foo'), '_INVOCANTCAN(Bad, foo) returns undef');
+null(_INVOCANTCAN(bless({}, 'Bad'), 'foo'), '_INVOCANTCAN(bad object, foo) returns undef');
+
+# Good values - class
+is(_INVOCANTCAN('Foo', 'foo'), 'Foo', '_INVOCANTCAN(Foo class, foo) returns class name');
+
+# Baz fakes isa but does not provide 'foo'
+null(_INVOCANTCAN(bless({}, 'Baz'), 'foo'), '_INVOCANTCAN(Baz object, foo) returns undef');
+
+# Good values - object
+foreach my $object (grep { $_->can('foo') } @objects)
+{
+    ok(_INVOCANTCAN($object, 'foo'), '_INVOCANTCAN(object, foo) returns true when expected');
+    is(refaddr(_INVOCANTCAN($object, 'foo')), refaddr($object), '_INVOCANTCAN(object, foo) returns the same object');
 }
 
 #####################################################################

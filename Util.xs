@@ -368,6 +368,54 @@ CODE:
 }
 
 void
+_INSTANCECAN(ref,method)
+    SV *ref;
+    char *method;
+PROTOTYPE: $$
+CODE:
+{
+    STRLEN len;
+    if( SvMAGICAL(ref) )
+        mg_get(ref);
+    if( SvROK(ref) && method && ( ( len = strlen(method) ) > 0 ) )
+    {
+        if( sv_isobject(ref) )
+        {
+            I32 has_method = 0;
+            int count;
+
+            ENTER;
+            SAVETMPS;
+            PUSHMARK(SP);
+            XPUSHs( sv_2mortal( newSVsv( ref ) ) );
+            XPUSHs( sv_2mortal( newSVpv( method, len ) ) );
+            PUTBACK;
+
+            if( ( count = call_method("can", G_SCALAR) ) )
+            {
+                I32 oldax = ax;
+                SPAGAIN;
+                SP -= count;
+                ax = (SP - PL_stack_base) + 1;
+                has_method = SvTRUE(ST(0));
+                ax = oldax;
+            }
+
+            PUTBACK;
+            FREETMPS;
+            LEAVE;
+
+            if( has_method )
+            {
+                ST(0) = ref;
+                XSRETURN(1);
+            }
+        }
+    }
+    XSRETURN_UNDEF;
+}
+
+void
 _XScompiled ()
     CODE:
        XSRETURN_YES;

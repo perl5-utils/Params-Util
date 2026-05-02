@@ -69,13 +69,14 @@ XSLoader::load("Params::Util", $VERSION) unless $ENV{PERL_PARAMS_UTIL_PP};
 
 our @EXPORT_OK = qw{
   _STRING     _IDENTIFIER
-  _CLASS      _CLASSISA   _SUBCLASS  _DRIVER  _CLASSDOES
+  _CLASS      _CLASSISA   _CLASSCAN  _SUBCLASS  _DRIVER  _CLASSDOES
   _NUMBER     _POSINT     _NONNEGINT
   _SCALAR     _SCALAR0
   _ARRAY      _ARRAY0     _ARRAYLIKE
   _HASH       _HASH0      _HASHLIKE
   _CODE       _CODELIKE
-  _INVOCANT   _REGEX      _INSTANCE  _INSTANCEDOES
+  _INVOCANT   _INVOCANTCAN
+  _REGEX      _INSTANCE  _INSTANCEDOES  _INSTANCECAN
   _SET        _SET0
   _HANDLE
 };
@@ -156,6 +157,17 @@ This routine behaves exactly like C<L</_CLASSISA>>, but checks with C<< ->DOES
 >> rather than C<< ->isa >>.  This is probably only a good idea to use on Perl
 5.10 or later, when L<UNIVERSAL::DOES|UNIVERSAL::DOES/DOES> has been
 implemented.
+
+=head2 _CLASSCAN $string, $method
+
+The C<_CLASSCAN> function tests whether a value is a valid class name that
+provides a particular method via C<< ->can >>.
+
+This avoids calling C<UNIVERSAL::can> as a function, which is considered
+problematic because it bypasses any overridden C<can> method.
+
+Returns the string as a convenience if it is a valid class name that provides
+the method, or C<undef> if not.
 
 =head2 _SUBCLASS $string, $class
 
@@ -373,6 +385,20 @@ This routine behaves exactly like C<L</_INSTANCE>>, but checks with C<< ->DOES
 5.10 or later, when L<UNIVERSAL::DOES|UNIVERSAL::DOES/DOES> has been
 implemented.
 
+=head2 _INSTANCECAN $object, $method
+
+This routine behaves exactly like C<L</_INSTANCE>>, but checks with C<< ->can
+>> rather than C<< ->isa >>.  Returns the object as a convenience if it is
+blessed and provides the specified method, or C<undef> if not.
+
+=head2 _INVOCANTCAN $value, $method
+
+Tests whether the given value is a valid method invocant (class name or
+blessed object) that provides a particular method via C<< ->can >>.
+
+Returns the value itself as a convenience, or C<undef> if the value is not
+a valid invocant or does not provide the method.
+
 =head2 _REGEX $value
 
 The C<_REGEX> function is intended to be imported into your package,
@@ -445,8 +471,6 @@ a class name, the module does not exist, the module does not load,
 or the class fails the isa test.
 
 =head1 TO DO
-
-- Add _CAN to help resolve the UNIVERSAL::can debacle
 
 - Implement an assertion-like version of this module, that dies on
 error.
