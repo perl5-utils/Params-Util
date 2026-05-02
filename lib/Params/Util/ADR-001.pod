@@ -1,0 +1,86 @@
+=head1 ADR-001: DRY and SPOT using Test::WriteVariants
+
+=head2 Status
+
+Accepted
+
+=head2 Context
+
+Params::Util ships both a Pure-Perl (PP) and an XS implementation.  Both
+must be tested with the same test logic; the only difference is which
+backend is active, controlled via C<$ENV{PERL_PARAMS_UTIL_PP}>.
+
+Historically the test suite maintained two parallel directory trees
+(F<t/pp/> and F<t/xs/>) with near-identical content.  The sole
+difference was a single line in each file's C<BEGIN> block setting the
+environment variable to C<1> or C<0>.
+
+This violated both DRY (Don't Repeat Yourself) and SPOT (Single Point
+of Truth): every test change had to be applied twice, and divergence
+between the two trees was a recurring source of subtle bugs and wasted
+review effort.
+
+Hash-Merge (a sibling distribution maintained by the same author)
+already solved this problem using L<Test::WriteVariants>.
+
+=head2 Decision
+
+Adopt the L<Test::WriteVariants> pattern established in Hash-Merge:
+
+=over 4
+
+=item *
+
+Canonical tests live in F<t/inline/> as the single source of truth.
+
+=item *
+
+F<Sandbox/Tumble.pm> defines two variants (C<pp> and C<xs>) that only
+differ in the C<PERL_PARAMS_UTIL_PP> environment variable.
+
+=item *
+
+Running C<perl Makefile.PL> in a developer checkout (where F<Sandbox/>
+is present) regenerates F<t/pp/> and F<t/xs/> from the inline tests.
+
+=item *
+
+Generated files are excluded from version control (F<.gitignore>) but
+included in the distribution tarball (F<MANIFEST>), so CPAN consumers
+do not need L<Test::WriteVariants> installed.
+
+=item *
+
+C<xt/perltidy.t> excludes the generated directories since their
+formatting is determined by L<Test::WriteVariants>, not the project's
+F<.perltidyrc>.
+
+=back
+
+=head2 Consequences
+
+=over 4
+
+=item *
+
+Test logic is maintained in exactly one place; changes automatically
+propagate to both backend variants.
+
+=item *
+
+Adding a new variant (e.g. a future optional backend) requires only a
+new entry in F<Sandbox/Tumble.pm>, not duplicating every test file.
+
+=item *
+
+Developer tooling requires L<Test::WriteVariants> E<ge> 0.014 (declared
+as a develop prerequisite).
+
+=item *
+
+C<make realclean> removes the generated directories so that a fresh
+C<perl Makefile.PL> regenerates them from current inline sources.
+
+=back
+
+=cut

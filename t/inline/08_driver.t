@@ -6,7 +6,6 @@ BEGIN
 {
     $|  = 1;
     $^W = 1;
-    $ENV{PERL_PARAMS_UTIL_PP} ||= 0;
 }
 
 use Test::More tests => 91;

@@ -8,6 +8,5 @@ use Test::PerlTidy;
 
 run_tests(
     perltidyrc => '.perltidyrc',
-    exclude    =>
-      ['travis-perl-helpers', 'inc/inc_Capture-Tiny', 'inc/inc_Config-AutoConf', 'inc/latest.pm', 'inc/latest/private.pm'],
+    exclude    => ['inc/inc_Capture-Tiny', 'inc/inc_Config-AutoConf', 'inc/latest.pm', 'inc/latest/private.pm', 't/pp', 't/xs',],
 );

@@ -6,7 +6,6 @@ BEGIN
 {
     $|  = 1;
     $^W = 1;
-    $ENV{PERL_PARAMS_UTIL_PP} ||= 1;
 }
 
 sub _CODELIKE($);

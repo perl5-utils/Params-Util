@@ -16,6 +16,17 @@ BEGIN
 use inc::latest 'Capture::Tiny';
 use inc::latest 'Config::AutoConf';
 
+if (-d 'Sandbox')
+{
+    eval "use Sandbox::Tumble ();";
+    $@ and die $@;
+    eval "use File::Path ();";
+    File::Path->import;
+    -d 't/pp' and rmtree('t/pp');
+    -d 't/xs' and rmtree('t/xs');
+    Sandbox::Tumble->tumble(qw(t));
+}
+
 unless (-f "META.yml")
 {
     if (inc::latest->can("write"))
@@ -98,6 +109,7 @@ WriteMakefile1(
                     'Test::Pod::Coverage'                 => 0,
                     'Test::Pod::Spelling::CommonMistakes' => 0,
                     'Test::Spelling'                      => 0,
+                    'Test::WriteVariants'                 => '0.014',
                 },
             },
             configure => {
@@ -122,7 +134,8 @@ WriteMakefile1(
     depend             => {'$(FIRST_MAKEFILE)' => '$(VERSION_FROM)'},
     test               => {TESTS               => join(' ', 't/pp/*.t', ($loadable_xs ? 't/xs/*.t' : ()), 'xt/*.t')},
     # Otherwise 'cxinc' isn't defined
-    ($] < 5.012 ? (DEFINE => '-DPERL_EXT') : (),),
+    ($] < 5.012   ? (DEFINE    => '-DPERL_EXT')                         : (),),
+    (-d 'Sandbox' ? (realclean => {FILES => join(' ', 't/pp', 't/xs')}) : ()),
 );
 
 sub WriteMakefile1
