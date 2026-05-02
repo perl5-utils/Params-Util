@@ -473,9 +473,11 @@ or the class fails the isa test.
 =head1 TO DO
 
 - Implement an assertion-like version of this module, that dies on
-error.
+error.  See L<Params::Util::ADR-003> for design considerations.
 
-- Implement a Test:: version of this module, for use in testing
+- Implement a Test:: version of this module, for use in testing.
+See L<Params::Util::ADR-004> for the rationale to ship it as a
+separate distribution.
 
 =head1 SUPPORT
 

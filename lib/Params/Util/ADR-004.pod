@@ -1,0 +1,79 @@
+=head1 ADR-004: Test::Params::Util -- test predicates
+
+=head2 Status
+
+Proposed
+
+=head2 Context
+
+The original TODO list for Params::Util included a "Test:: version of
+this module, for use in testing."  The idea is to provide test
+functions that produce TAP-compatible diagnostics:
+
+    instance_ok($obj, 'Foo', 'constructor returns a Foo');
+    can_ok_methods($obj, qw(connect disconnect));
+
+Perl's testing ecosystem already offers L<Test::More/isa_ok> and
+L<Test::More/can_ok>, but these do not cover the full range of
+Params::Util predicates (C<_CODELIKE>, C<_HASHLIKE>, C<_HANDLE>,
+C<_DRIVER>, etc.).
+
+=head2 Decision
+
+Implement C<Test::Params::Util> as a B<separate CPAN distribution>.
+
+=over 4
+
+=item Why not in the Params-Util dist?
+
+Test modules depend on L<Test2> or L<Test::Builder>.  Params::Util is a
+zero-non-core-dependency module used deep in dependency chains.
+Pulling test infrastructure into its prerequisites would create
+circular or heavyweight dependencies for something that is only needed
+at test time.
+
+=item Why not a bundled module excluded from runtime?
+
+Even as an optional module, shipping it in the same dist means the
+F<.pm> file is installed into C<@INC>.  Build systems that scan
+installed modules (e.g. for dependency resolution) would see the
+Test2 dependency regardless of whether the module is ever loaded.
+
+=item Pollution concern
+
+Unlike C<Params::Util::Assert> (ADR-003), which shares implementation
+with the core predicates, C<Test::Params::Util> only I<uses> the
+predicates -- it has no privileged access to internals.  A separate
+dist with C<Params::Util> as a runtime prerequisite is the natural
+factoring.
+
+=back
+
+=head2 Consequences
+
+=over 4
+
+=item *
+
+C<Test::Params::Util> depends on C<Params::Util> and
+C<Test2::API> (or L<Test::Builder>).
+
+=item *
+
+Its release cycle is independent; new Params::Util predicates can
+ship before matching test functions exist, and vice versa.
+
+=item *
+
+The test module should mirror the Params::Util export list: for each
+C<_FOO> predicate, provide a corresponding C<foo_ok> (or similar)
+test function that produces useful diagnostics on failure.
+
+=item *
+
+This ADR does not block any work in the Params-Util distribution
+itself.
+
+=back
+
+=cut

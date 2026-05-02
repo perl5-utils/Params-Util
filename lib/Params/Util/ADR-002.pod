@@ -1,0 +1,78 @@
+=head1 ADR-002: Multi-method signatures for CAN and DOES predicates
+
+=head2 Status
+
+Proposed
+
+=head2 Context
+
+The current C<_CLASSCAN>, C<_INSTANCECAN>, C<_INVOCANTCAN>,
+C<_CLASSDOES>, and C<_INSTANCEDOES> predicates accept exactly one
+method or role name (C<$$> prototype).
+
+In practice, callers often need to verify that an invocant satisfies
+multiple capabilities at once (e.g. "provides both C<connect> and
+C<disconnect>") or fulfils several roles simultaneously.  Today this
+requires chaining multiple calls:
+
+    _INSTANCECAN($obj, 'connect') and _INSTANCECAN($obj, 'disconnect')
+
+This is verbose and evaluates the blessed/class check repeatedly.
+
+=head2 Decision
+
+B<Deferred.>  Introduce multi-method variants once a concrete consumer
+demonstrates the need.  The design space includes:
+
+=over 4
+
+=item Signature change
+
+C<_INSTANCECAN($obj, @methods)> -- breaks the C<$$> prototype.
+Prototypes cannot express C<$@>, so the function would need to drop
+its prototype or use a different calling convention.
+
+=item Semantic: AND vs OR
+
+Multiple arguments most naturally mean "provides all of these" (AND).
+An OR semantic ("provides at least one") is a different use case and
+would warrant a separate function name to avoid ambiguity.
+
+=item XS implications
+
+A variadic XS implementation must loop over the method list in C,
+calling C<< ->can >> or C<< ->DOES >> for each.  The early-exit on
+first failure makes this efficient, but the stack handling differs
+from the current fixed-arity pattern.
+
+=item Interaction with Assert (ADR-003)
+
+An assertion variant that reports I<which> method is missing benefits
+from knowing the full list up front rather than failing on the first
+chained call.
+
+=back
+
+=head2 Consequences
+
+=over 4
+
+=item *
+
+No action required now; the C<$$> variants are sufficient for the
+initial release.
+
+=item *
+
+When a consumer emerges, the multi-method variant should be added as a
+new function name (e.g. C<_INSTANCECAN_ALL>) rather than changing the
+existing C<$$> signature, preserving backwards compatibility.
+
+=item *
+
+The same pattern applies to C<_CLASSDOES> / C<_INSTANCEDOES> for
+verifying multiple roles simultaneously.
+
+=back
+
+=cut

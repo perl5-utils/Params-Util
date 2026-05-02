@@ -1,0 +1,91 @@
+=head1 ADR-003: Params::Util::Assert -- assertion variants
+
+=head2 Status
+
+Proposed
+
+=head2 Context
+
+Params::Util predicates return the value on success or C<undef> on
+failure.  Callers that want to die on invalid input must wrap each
+check:
+
+    my $obj = _INSTANCE($val, 'Foo') or croak "expected a Foo";
+
+This pattern is repetitive.  An assertion module that dies directly
+would be more ergonomic and -- in XS -- more efficient, since it avoids
+the Perl-level conditional after the C<< ->isa >> / C<< ->can >> call.
+
+=head2 Decision
+
+B<Deferred.>  Ship C<Params::Util::Assert> as a separate module
+within the same distribution once the interface stabilises.  Key open
+questions:
+
+=over 4
+
+=item Error behaviour
+
+C<croak> vs C<carp> vs throwing a structured exception object.
+Different consumers need different behaviour; a single hard-coded
+C<croak> does not serve them all.
+
+=item Error message content
+
+Minimally useful: the predicate name and the failing value's type.
+Maximally useful: parameter name, expected type, caller context.  The
+richer the message, the more the interface must accept (extra
+arguments or configuration).
+
+=item Batch validation
+
+Validating all parameters up front and collecting all failures (rather
+than dying on the first) is common in form/API validation.  This
+fundamentally changes the control flow and may warrant a separate
+interface rather than extending the per-parameter assertion.
+
+=item XS integration
+
+A direct C<croak> from XS avoids the return-check-croak round-trip.
+However, baking error-message formatting into C makes the module
+harder to extend.  A possible middle ground: XS performs the check and
+calls a configurable Perl-level formatter only on the failure path.
+
+=item Relationship to type systems
+
+L<Type::Tiny>, L<Specio>, and Moose type constraints already provide
+assertion semantics.  C<Params::Util::Assert> should complement rather
+than compete -- it targets the lightweight, no-dependency niche where
+full type systems are overkill.
+
+=back
+
+=head2 Consequences
+
+=over 4
+
+=item *
+
+No code ships until a concrete consumer clarifies the interface
+requirements.
+
+=item *
+
+When implemented, the module lives in F<lib/Params/Util/Assert.pm>
+within the Params-Util distribution -- no separate dist, no runtime
+pollution for users who do not load it.
+
+=item *
+
+XS acceleration is desirable but must not lock in an error-reporting
+strategy that cannot be overridden from Perl.
+
+=item *
+
+The Assert interface should be designed with ADR-002 in mind: if
+multi-method C<_CAN> / C<_DOES> variants exist, the assertion should
+report which specific method or role was missing.
+
+=back
+
+=cut

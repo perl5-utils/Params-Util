@@ -8,6 +8,7 @@ all_pod_files_spelling_ok();
 
 __END__
 ADR
+arity
 dist
 importable
 Jens
@@ -15,4 +16,5 @@ param
 params
 PurePerl
 Rehsack
+TODO
 Util
