@@ -481,9 +481,17 @@ separate distribution.
 
 =head1 SUPPORT
 
-Bugs should be reported via the CPAN bug tracker at
+Bugs and feature requests should be reported via GitHub Issues at
 
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Params-Util>
+L<https://github.com/perl5-utils/Params-Util/issues>
+
+The source repository is at
+
+L<https://github.com/perl5-utils/Params-Util>
+
+For historical bug reports, see the CPAN RT queue at
+
+L<https://rt.cpan.org/Dist/Display.html?Name=Params-Util>
 
 =head1 AUTHOR
 
@@ -499,7 +507,7 @@ L<Params::Validate>
 
 Copyright 2005 - 2012 Adam Kennedy.
 
-Copyright 2020 - 2020 Jens Rehsack.
+Copyright 2020 - 2026 Jens Rehsack.
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
